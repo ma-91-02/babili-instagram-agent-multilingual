@@ -33,6 +33,12 @@
 في Claude Code:
 
 ```
+/plugin install babili-instagram-agent --marketplace ma-91-02/babili-instagram-agent-multilingual
+```
+
+في الإصدارات الأقدم من Claude Code أضف المتجر أولاً:
+
+```
 /plugin marketplace add ma-91-02/babili-instagram-agent-multilingual
 /plugin install babili-instagram-agent
 ```

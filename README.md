@@ -65,6 +65,12 @@ cp -r babili-instagram-agent-multilingual/skills/ig-* ~/.claude/skills/
 Or as a plugin:
 
 ```
+/plugin install babili-instagram-agent --marketplace ma-91-02/babili-instagram-agent-multilingual
+```
+
+On Claude Code older than 2.1.275, add the marketplace first:
+
+```
 /plugin marketplace add ma-91-02/babili-instagram-agent-multilingual
 /plugin install babili-instagram-agent
 ```
