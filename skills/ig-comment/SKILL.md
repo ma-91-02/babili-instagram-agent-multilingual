@@ -9,6 +9,8 @@ description: >-
 
 # ig-comment
 
+**Language.** Write in the audience's language and dialect from `language:` in voice.md, or the language the user writes in. Arabic, Russian, Turkish, Polish, Czech and English are supported: follow the `ig-lang` skill (`../ig-lang/SKILL.md`) for dialect, register and local norms, and write it native rather than translating the English examples below.
+
 Commenting is the highest-leverage twenty minutes on Instagram and the easiest
 to do badly. A comment near the top of a reel with 40,000 views is seen by more
 people than most accounts' own posts, and it is the one place where a stranger

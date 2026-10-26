@@ -1,0 +1,164 @@
+{
+  "name": "Czech",
+  "native": "Čeština",
+  "note": "Czech is inflected, so most word lists use stems: an entry ending in '*' matches every ending ('chyb*' covers chyba, chyby, chybu). The Czech low-high quotes („…“) and the dash used as a dash are correct house style and are never stripped or counted as a machine tell. 'jsem' and 'jsme' count as first person, because Czech usually drops the pronoun itself. Thresholds are first estimates, not measured on a corpus. Edit freely.",
+  "rtl": false,
+  "cased": true,
+  "sentence_end": ".!?…",
+  "wpm": 140,
+  "hook_words": [4, 10],
+  "hook_chars": 70,
+  "typography_native": ["—", "–", "„", "“", "‚", "‘"],
+
+  "numbers": {
+    "spoken": [
+      "nula", "dva", "dvě", "tři", "čtyři", "pět", "šest", "sedm", "osm", "devět", "deset",
+      "dvacet", "třicet", "sto", "tisíc*", "milion*", "miliard*", "polovin*", "dvakrát",
+      "dvojnásob*"
+    ],
+    "money": [
+      "kč", "korun*", "czk", "euro", "eur", "dolar*", "procent*", "plat", "platu", "výplat*",
+      "zisk*", "zdarma", "cen*", "náklad*", "sleva", "slev*"
+    ]
+  },
+
+  "hook": {
+    "stakes": [
+      "ne", "nikdy", "nikdo", "nic", "přestaň*", "stop", "chyb*", "ztrat*", "ztrát*",
+      "přišel", "přišla", "stál*", "rozbi*", "znič*", "selhá*", "zákaz*", "horší",
+      "nejhorší", "nesnáš*", "lež*", "lhal*", "pravd*", "tajemství", "tajn*", "skryt*",
+      "problém*", "rizik*", "nebezpeč*", "varován*", "lituj*", "ale", "místo", "před",
+      "dokud", "kromě", "jen", "pouze", "bez", "už", "ještě", "pořád", "vlastně", "opravdu",
+      "první", "zdarma", "škrábanc*", "skvrn*"
+    ],
+    "weak_openers": [
+      "takže", "tak", "no", "ok", "hele", "ahoj", "čau", "zdravím", "dobrý den", "dnes",
+      "v tomto", "chtěl", "chtěla", "chci", "poslouchejte", "lidi", "víte", "tohle je", "je",
+      "když"
+    ],
+    "imperatives": [
+      "přestaň*", "stop", "ulož*", "koukej*", "podívej*", "zkus*", "smaž*", "použij*",
+      "zapamatuj*", "piš", "napiš*", "začni*", "nikdy", "vždy", "ne", "udělej*",
+      "zkontroluj*", "nastříkej*", "otři*", "vyhoď*"
+    ],
+    "address": {
+      "you": [
+        "ty", "ti", "tě", "tebe", "tobě", "tebou", "tvůj", "tvoj*", "tvá", "tvé", "vy",
+        "vám", "vás", "vámi", "váš", "vaš*"
+      ],
+      "you_suffixes": ["š", "te"],
+      "you_exceptions": [
+        "náš", "koš", "příliš", "spíš", "guláš", "plyš", "kaš", "veš", "myš", "tuš", "dnes",
+        "poté", "proto", "taky", "teď", "kde", "ale", "aute", "minute", "chate", "kvalite"
+      ],
+      "me": [
+        "já", "mi", "mě", "mně", "mnou", "můj", "moj*", "my", "nám", "nás", "námi", "náš",
+        "naš*", "jsem", "jsme"
+      ],
+      "me_suffixes": [],
+      "me_exceptions": []
+    },
+    "dealbreakers": [
+      {"type": "stop", "regex": "(?i)^\\s*(?:stop\\b|nescrolluj|nepřetáčej|zastav\\s+se)"},
+      {"type": "preamble", "regex": "(?i)\\bv\\s+(?:tomto|dnešním)\\s+(?:videu|reelsu|díle)\\b|\\bdnes\\s+(?:vám\\s+|ti\\s+)?(?:ukážu|řeknu)\\b"},
+      {"type": "greeting", "regex": "(?i)^\\s*(?:ahoj|čau|zdravím|dobrý\\s+den|nazdar|čus)\\b"}
+    ]
+  },
+
+  "beats": {
+    "stopwords": [
+      "a", "v", "ve", "na", "se", "je", "to", "že", "s", "z", "ze", "do", "o", "i", "k",
+      "ale", "jak", "co", "pro", "by", "jsem", "jsme", "jsou", "být", "byl", "byla", "bylo",
+      "tak", "už", "jen", "ten", "ta", "ty", "tím", "tohle", "taky", "také", "já", "my", "vy",
+      "on", "ona", "oni", "mi", "mě", "ti", "tě", "jeho", "její", "jejich", "když", "nebo"
+    ]
+  },
+
+  "caption": {
+    "asks": [
+      {"name": "comment a keyword", "regex": "(?i)\\b(?:napiš|napište|pište|nechte|nech)\\b[^.!?\\n]{0,30}\\bkoment\\w*"},
+      {"name": "DM me", "regex": "(?i)(?:\\bnapiš(?:te)?\\s+(?:mi|nám)\\s+(?:do\\s+)?zpráv\\w*|\\bdo\\s+zpráv\\b|\\bdm\\b)"},
+      {"name": "save this", "regex": "(?i)\\bulož(?:te)?(?:\\s+si)?\\b"},
+      {"name": "share this", "regex": "(?i)\\b(?:sdílej(?:te)?|pošli(?:te)?)\\b"},
+      {"name": "follow", "regex": "(?i)\\bsleduj(?:te)?\\b"},
+      {"name": "link in bio", "regex": "(?i)\\bodkaz\\s+(?:je\\s+)?v\\s+(?:biu|bio|profilu)\\b"},
+      {"name": "swipe or tap", "regex": "(?i)\\b(?:posuň(?:te)?|přetoč(?:te)?|swipni(?:te)?)\\b"},
+      {"name": "answer a question", "regex": "(?i)\\b(?:a\\s+vy|a\\s+ty|kterou\\s+byste|co\\s+byste\\s+vybrali|dejte\\s+vědět|dej\\s+vědět)\\b"}
+    ],
+    "filler_tags": [
+      "#protebe", "#prote", "#pro_tebe", "#sledujte", "#lajk", "#fyp", "#explore", "#viral"
+    ]
+  },
+
+  "voice": {
+    "pronoun_target": 4.0
+  },
+
+  "lexicon": {
+    "words": [
+      {"find": "nepostradateln*", "replace": null, "family": "adjectives"},
+      {"find": "revoluční*", "replace": null, "family": "adjectives"},
+      {"find": "inovativní*", "replace": null, "family": "adjectives"},
+      {"find": "jedinečn*", "replace": null, "family": "adjectives"},
+      {"find": "neuvěřiteln*", "replace": null, "family": "adjectives"},
+      {"find": "magick*", "replace": null, "family": "adjectives"},
+      {"find": "bez námahy", "replace": "snadno", "family": "adverbs"},
+      {"find": "s lehkostí", "replace": "snadno", "family": "adverbs"},
+      {"find": "mrknutím oka", "replace": null, "family": "adverbs"},
+      {"find": "hraje klíčovou roli", "replace": null, "family": "verbs"},
+      {"find": "na vyšší úroveň", "replace": null, "family": "verbs"}
+    ],
+    "phrases": [
+      {"find": "v dnešním rychle se měnícím světě", "replace": "", "family": "openers"},
+      {"find": "v dnešní uspěchané době", "replace": "", "family": "openers"},
+      {"find": "v dnešní době", "replace": null, "family": "openers"},
+      {"find": "v digitální éře", "replace": "", "family": "openers"},
+      {"find": "není žádným tajemstvím, že", "replace": "", "family": "openers"},
+      {"find": "stojí za zmínku, že", "replace": "", "family": "openers"},
+      {"find": "je důležité zmínit, že", "replace": "", "family": "openers"},
+      {"find": "pojďme se ponořit do", "replace": null, "family": "openers"},
+      {"find": "závěrem", "replace": "", "family": "closers"},
+      {"find": "na závěr", "replace": "", "family": "closers"},
+      {"find": "nezapomeňte dát like", "replace": "", "family": "instagram"},
+      {"find": "nezapomeň dát like", "replace": "", "family": "instagram"},
+      {"find": "dejte like", "replace": "", "family": "instagram"},
+      {"find": "sledujte pro víc", "replace": "", "family": "instagram"},
+      {"find": "sledujte pro více", "replace": "", "family": "instagram"},
+      {"find": "uložte si to, ať to neztratíte", "replace": "uložte si to", "family": "instagram"},
+      {"find": "ulož si to, ať to neztratíš", "replace": "ulož si to", "family": "instagram"}
+    ],
+    "structures": [
+      {"id": "not-just", "regex": "(?i)\\b(?:není\\s+to|to\\s+není)\\s+jen\\b[^.!?\\n]{2,60}[,—–-]\\s*(?:je\\s+to|ale)\\b", "name": "«Není to jen X, je to Y» (\"It's not just X, it's Y\")", "fix": "Say the one thing you actually mean. Delete the setup half."},
+      {"id": "not-only", "regex": "(?i)\\bnejen\\b[^.!?\\n]{2,80}\\bale\\s+(?:i|také|taky)\\b", "name": "«Nejen X, ale i Y» (\"Not only X but also Y\")", "fix": "Split into two sentences, or drop the weaker half."},
+      {"id": "isnt-about", "regex": "(?i)\\bnejde\\s+o\\b[^.!?\\n]{2,60}[.!,]\\s*jde\\s+o\\b", "name": "«Nejde o X. Jde o Y.»", "fix": "Lead with Y. The reversal is the tell."},
+      {"id": "the-result", "regex": "(?im)^\\s*(?:výsledek|háček|tajemství)\\?\\s*$", "name": "One-word rhetorical question line", "fix": "Answer it inline instead of staging a reveal."},
+      {"id": "triad", "regex": "(?i)\\b\\w+,\\s\\w+\\s+a\\s+\\w+\\.", "name": "Rule-of-three triad (X, Y a Z.)", "fix": "Two items or four. Three is the model's default rhythm."},
+      {"id": "in-this-video", "regex": "(?i)\\bv\\s+(?:tomto|dnešním)\\s+(?:videu|reelsu|příspěvku)\\b|\\bahoj\\s+všichni\\b|\\bdnes\\s+vám\\s+(?:ukážu|řeknu)\\b", "name": "Video preamble («v dnešním videu vám ukážu»)", "fix": "Delete it and start at the payoff. The first two seconds decide the whole reel."},
+      {"id": "stop-scroll", "regex": "(?im)^\\s*(?:stop\\b|nescrolluj|nepřetáčej|zastav\\s+se)", "name": "\"Stop scrolling\" opener («nescrolluj»)", "fix": "The scroll-stop has to be the claim itself. Asking for attention is the tell that you have not earned it."},
+      {"id": "follow-bait", "regex": "(?i)\\b(?:sledujte\\s+pro\\s+(?:víc|více)|dejte\\s+like|označte\\s+(?:kamaráda|kamarádku|někoho)|pošlete\\s+to\\s+(?:někomu|kamarádovi|kamarádce))\\b", "name": "Reflex follow or tag bait («označte kamarádku»)", "fix": "Ask for the one action this post actually earns. The generic ask trains the audience to ignore every ask."},
+      {"id": "engagement-bait", "regex": "(?im)(?:souhlasíte\\?|co\\s+si\\s+myslíte\\?|kdo\\s+taky\\?|má\\s+to\\s+někdo\\s+taky\\?)\\s*$", "name": "Reflex engagement bait («souhlasíte?»)", "fix": "Ask a question only you could ask, about the specific thing above it."},
+      {"id": "in-summary", "regex": "(?im)^\\s*(?:závěrem|na\\s+závěr|shrnuto)\\b", "name": "Essay-closer opener («závěrem»)", "fix": "A post does not need a conclusion paragraph."},
+      {"id": "as-an-ai", "regex": "(?i)\\bjako\\s+(?:ai|umělá\\s+inteligence|jazykový\\s+model)\\b", "name": "Model self-reference", "fix": "Delete the sentence."},
+      {"id": "caps-shout", "regex": "\\b[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]{3,}\\b(?:\\s+\\b[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]{3,}\\b){2,}", "name": "Three or more shouted words in a row", "fix": "Caps are a volume knob, not a highlighter. One word, at most."}
+    ]
+  },
+
+  "hook_match": {
+    "1": "\\b(?:stál[aoi]?|stálo)\\s+(?:mě|nás)\\b|\\bpřišel?\\s+jsem\\s+o\\b[^.!?]{0,25}\\d|\\bztratil(?:a)?\\s+jsem\\b[^.!?]{0,25}\\d|\\d[\\d\\s,.]*\\s*(?:kč|czk|\\$|eur|tisíc)[^.!?]{0,20}\\b(?:stál|přišel|ztratil)",
+    "2": "^\\s*(?:přestaň(?:te)?|nikdy\\s+ne\\w+|ne(?:kupuj|používej|dělej|myj|plať)\\w*)\\b",
+    "3": "\\b(?:nikdo|nikdo\\s+nikdy)\\s+(?:vám\\s+|ti\\s+)?(?:neřekne|neříká|neřekl)\\b|\\bo\\s+čem\\s+se\\s+nemluví\\b",
+    "5": "\\bdřív\\s+(?:to\\s+)?(?:trvalo|zabralo|zabíralo)\\b|\\b(?:teď|dnes)\\s+(?:to\\s+)?(?:trvá|zabere)\\b|\\bza\\s+\\d+\\s*(?:sekund|minut|min|s)\\w*",
+    "7": "\\b(?:největší|nejčastější)\\s+chyb[ay]\\b|\\b(?:děláš|myješ|čistíš|používáš|děláte|myjete|čistíte|používáte)\\b[^.!?]*\\bšpatně\\b",
+    "9": "^\\s*(?:ulož(?:te)?\\s+si|ukradni(?:te)?|ber(?:te)?|zapamatuj(?:te)?\\s+si)\\b",
+    "10": "^\\s*(?:jestli|pokud|když)\\s+(?:ty|vy|tvůj|tvoje|váš|vaše|máš|máte|\\w+š)\\b",
+    "11": "^\\s*\\d+\\s+\\w+|\\b(?:číslo|bod)\\s+\\d+\\b|^\\s*(?:tři|čtyři|pět|sedm|deset)\\s+\\w+",
+    "15": "\\bprvních\\s+\\d+\\s+\\w+",
+    "16": "^\\s*[„\"]?(?:jak|co|proč|kdy|kde|kdo|který|která|které|jestli|dá\\s+se|stojí\\s+za\\s+to)\\b[^?]{3,110}\\?",
+    "17": "\\b(?:vs\\.?|versus|proti)\\b|\\brozdíl\\s+mezi\\b",
+    "18": "^\\s*(?:koukej(?:te)?|podívej(?:te)?\\s+se|sleduj(?:te)?|ukážu\\s+(?:ti|vám))\\b",
+    "20": "\\bnepotřebuješ\\b|\\bnepotřebujete\\b|\\bnemusíš\\b|\\bnemusíte\\b",
+    "23": "^\\s*\\d[\\d\\s,.]*\\s?%|\\b\\d[\\d,.]*\\s?%\\s+(?:čechů|lidí|domácností)\\b",
+    "24": "^\\s*(?:tohle|toto|to)\\s+(?:je\\s+)?(?:nový|nová|nové|můj\\s+nový|moje\\s+nová)\\b",
+    "26": "^\\s*(?:nejrychlejší|nejjednodušší|nejlepší|nejsnazší|nejlevnější|jediný|jediná)\\s+\\w+|\\b(?:nejrychlejší|nejlepší|jediný|nejjednodušší)\\s+způsob\\b"
+  }
+}

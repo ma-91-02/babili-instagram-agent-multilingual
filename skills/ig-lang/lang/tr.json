@@ -1,0 +1,167 @@
+{
+  "name": "Turkish",
+  "native": "Türkçe",
+  "note": "Turkish builds words out of suffixes, so stems ending in '*' do most of the work here ('kaybet*' covers kaybettim, kaybettik, kaybetme). Dotted and dotless I are lower-cased correctly before matching (İ -> i, I -> ı). Percentages are written %80 in Turkish and are counted either way round. Thresholds are first estimates, not measured on a corpus. Edit freely.",
+  "rtl": false,
+  "cased": true,
+  "sentence_end": ".!?…",
+  "wpm": 120,
+  "hook_words": [4, 9],
+  "hook_chars": 70,
+  "typography_native": [],
+
+  "numbers": {
+    "spoken": [
+      "sıfır", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz", "on", "yirmi",
+      "otuz", "kırk", "elli", "yüz", "bin", "milyon*", "milyar*", "yarım", "yarısı",
+      "iki kat", "katı"
+    ],
+    "money": [
+      "lira", "tl", "dolar", "euro", "kuruş", "para*", "fiyat*", "maaş*", "ücretsiz",
+      "bedava", "indirim*", "yüzde"
+    ]
+  },
+
+  "hook": {
+    "stakes": [
+      "değil", "yok", "asla", "hiç", "hiçbir", "hata*", "yanlış*", "kaybet*", "kayıp",
+      "bozul*", "boz*", "mahvet*", "berbat", "kimse", "sakın", "dur", "yasak*", "tehlike*",
+      "risk*", "uyarı*", "pişman*", "gizli*", "sır", "sırrı", "sırları", "gerçek*", "yalan*", "sorun*",
+      "problem*", "ama", "fakat", "ancak", "sadece", "yalnızca", "önce", "yerine", "rağmen",
+      "bedava", "ücretsiz", "ilk", "hâlâ", "hala", "zaten", "aslında", "bile", "çizil*", "leke*"
+    ],
+    "weak_openers": [
+      "merhaba", "selam", "herkese", "arkadaşlar", "bugün", "şimdi", "evet", "tamam",
+      "aslında", "yani", "bu videoda", "size", "biliyorsunuz", "hepimiz", "hadi", "gelin",
+      "öncelikle", "şöyle"
+    ],
+    "imperatives": [
+      "dur", "bırak*", "kaydet*", "izle*", "bak", "bakın", "dene*", "sil", "silin", "kullan*",
+      "yaz", "yazın", "gönder*", "başla*", "sakın", "asla", "yap", "yapın", "kontrol", "sık",
+      "temizle*", "unutma*"
+    ],
+    "address": {
+      "you": [
+        "sen", "sana", "seni", "senin", "sende", "siz", "size", "sizi", "sizin", "sizde"
+      ],
+      "you_suffixes": ["sınız", "siniz", "sunuz", "sünüz", "ınız", "iniz", "unuz", "ünüz", "yorsun", "yorsunuz"],
+      "you_exceptions": ["deniz", "domuz", "boynuz", "yalnız", "sonsuz"],
+      "me": [
+        "ben", "bana", "beni", "benim", "bende", "biz", "bize", "bizi", "bizim", "bizde"
+      ],
+      "me_suffixes": ["dım", "dim", "dum", "düm", "tım", "tim", "tum", "yorum", "dık", "dik", "duk", "dük", "tık", "tik", "tuk", "tük"],
+      "me_exceptions": [
+        "plastik", "kritik", "estetik", "pratik", "otomatik", "elektrik", "mantık", "etik",
+        "taktik", "politik", "mistik", "lojistik", "kozmetik", "organik", "teknik", "klasik",
+        "müzik", "yorum", "tutum", "durum", "ritim", "kardeşlik", "temizlik", "lik", "lık",
+        "ilk", "tik", "dik"
+      ]
+    },
+    "dealbreakers": [
+      {"type": "stop", "regex": "(?i)^\\s*(?:dur\\b|kaydırma|kaydırmayı\\s+bırak|geçme\\b)"},
+      {"type": "preamble", "regex": "(?i)\\bbu\\s+(?:videoda|videomda|reels'?te|paylaşımda)\\b|\\bbugünkü\\s+videoda\\b|\\bsize\\s+(?:göstereceğim|anlatacağım)\\b"},
+      {"type": "greeting", "regex": "(?i)^\\s*(?:merhaba|selam\\w*|herkese\\s+merhaba|günaydın|iyi\\s+akşamlar|hey)\\b"}
+    ]
+  },
+
+  "beats": {
+    "stopwords": [
+      "ve", "bir", "bu", "şu", "o", "da", "de", "ki", "mi", "mı", "mu", "mü", "ile", "için",
+      "çok", "daha", "gibi", "ama", "ne", "ben", "sen", "biz", "siz", "onlar", "var", "yok",
+      "değil", "olarak", "kadar", "sonra", "önce", "her", "hiç", "en", "şey", "diye", "ya",
+      "veya", "ise", "eğer", "bile", "hem", "artık", "sadece"
+    ]
+  },
+
+  "caption": {
+    "asks": [
+      {"name": "comment a keyword", "regex": "(?i)\\b(?:yorumlara|yoruma)\\b[^.!?\\n]{0,30}\\b(?:yaz|yazın|bırak|bırakın)\\b|\\b(?:yaz|yazın)\\b[^.!?\\n]{0,30}\\byorumlara\\b"},
+      {"name": "DM me", "regex": "(?i)\\b(?:dm|direkt(?:ten)?|özel(?:den)?\\s+mesaj|mesaj\\s+at(?:ın)?)\\b"},
+      {"name": "save this", "regex": "(?i)\\bkaydet(?:in)?\\b"},
+      {"name": "share this", "regex": "(?i)\\b(?:paylaş(?:ın)?|gönder(?:in)?)\\b"},
+      {"name": "follow", "regex": "(?i)\\btakip\\s+et(?:in)?\\b"},
+      {"name": "link in bio", "regex": "(?i)\\b(?:link|bağlantı)\\s+(?:bio(?:'?da|da)?|profilde)\\b"},
+      {"name": "swipe or tap", "regex": "(?i)\\b(?:kaydır(?:ın)?|sola\\s+kaydır)\\b"},
+      {"name": "answer a question", "regex": "(?i)\\b(?:siz\\s+ne\\s+düşünüyorsunuz|hangisi|sizce|bana\\s+yazın)\\b"}
+    ],
+    "filler_tags": [
+      "#keşfet", "#kesfet", "#keşfetteyiz", "#keşfetbeniöneçıkar", "#kesfetbeniönecikar",
+      "#beğen", "#takip", "#takipedin", "#explore", "#viral"
+    ]
+  },
+
+  "voice": {
+    "pronoun_target": 4.0
+  },
+
+  "lexicon": {
+    "words": [
+      {"find": "vazgeçilmez*", "replace": null, "family": "adjectives"},
+      {"find": "olmazsa olmaz*", "replace": null, "family": "adjectives"},
+      {"find": "devrim niteliğinde", "replace": null, "family": "adjectives"},
+      {"find": "eşsiz", "replace": null, "family": "adjectives"},
+      {"find": "muhteşem", "replace": null, "family": "adjectives"},
+      {"find": "sihirli", "replace": null, "family": "adjectives"},
+      {"find": "zahmetsizce", "replace": "kolayca", "family": "adverbs"},
+      {"find": "son derece", "replace": "çok", "family": "adverbs"},
+      {"find": "bir çırpıda", "replace": null, "family": "adverbs"},
+      {"find": "kritik öneme sahip", "replace": "önemli", "family": "adjectives"},
+      {"find": "büyük önem taşı*", "replace": null, "family": "verbs"},
+      {"find": "oyunun kurallarını değiştir*", "replace": null, "family": "verbs"},
+      {"find": "bir üst seviyeye", "replace": null, "family": "verbs"}
+    ],
+    "phrases": [
+      {"find": "günümüzün hızla değişen dünyasında", "replace": "", "family": "openers"},
+      {"find": "günümüz dünyasında", "replace": "", "family": "openers"},
+      {"find": "dijital çağda", "replace": "", "family": "openers"},
+      {"find": "hiç kuşkusuz", "replace": "", "family": "openers"},
+      {"find": "şüphesiz ki", "replace": "", "family": "openers"},
+      {"find": "unutmamak gerekir ki", "replace": "", "family": "openers"},
+      {"find": "şunu belirtmek gerekir ki", "replace": "", "family": "openers"},
+      {"find": "hadi birlikte keşfedelim", "replace": "", "family": "openers"},
+      {"find": "gelin birlikte bakalım", "replace": null, "family": "openers"},
+      {"find": "özetle", "replace": "", "family": "closers"},
+      {"find": "takip etmeyi unutmayın", "replace": "", "family": "instagram"},
+      {"find": "takip etmeyi unutma", "replace": "", "family": "instagram"},
+      {"find": "beğenmeyi unutmayın", "replace": "", "family": "instagram"},
+      {"find": "beğenmeyi ve takip etmeyi unutmayın", "replace": "", "family": "instagram"},
+      {"find": "daha fazlası için takip edin", "replace": "", "family": "instagram"},
+      {"find": "daha fazlası için takipte kalın", "replace": "", "family": "instagram"},
+      {"find": "kaydetmeyi unutma", "replace": "kaydet", "family": "instagram"},
+      {"find": "kaydetmeyi unutmayın", "replace": "kaydedin", "family": "instagram"}
+    ],
+    "structures": [
+      {"id": "not-just", "regex": "(?i)\\b(?:sadece|yalnızca)\\b[^.!?\\n]{2,60}\\bdeğil(?:dir)?\\b\\s*[,;]", "name": "«Sadece X değil, Y» (\"It's not just X, it's Y\")", "fix": "Say the one thing you actually mean. Delete the setup half."},
+      {"id": "not-only", "regex": "(?i)\\b(?:sadece|yalnızca)\\b[^.!?\\n]{2,80}\\bdeğil,?\\s+aynı\\s+zamanda\\b", "name": "«Sadece X değil, aynı zamanda Y» (\"Not only X but also Y\")", "fix": "Split into two sentences, or drop the weaker half."},
+      {"id": "isnt-about", "regex": "(?i)\\bmesele\\b[^.!?\\n]{2,40}\\bdeğil\\b[.!,]\\s*(?:mesele|asıl\\s+mesele)\\b", "name": "«Mesele X değil. Mesele Y.»", "fix": "Lead with Y. The reversal is the tell."},
+      {"id": "the-result", "regex": "(?im)^\\s*(?:sonuç|sır|işin\\s+sırrı|en\\s+güzeli)\\?\\s*$", "name": "One-word rhetorical question line", "fix": "Answer it inline instead of staging a reveal."},
+      {"id": "triad", "regex": "(?i)\\b\\w+,\\s\\w+\\s+ve\\s+\\w+\\.", "name": "Rule-of-three triad (X, Y ve Z.)", "fix": "Two items or four. Three is the model's default rhythm."},
+      {"id": "in-this-video", "regex": "(?i)\\bbu\\s+(?:videoda|videomda|reels'?te|paylaşımda)\\b|\\bbugünkü\\s+videoda\\b|\\bherkese\\s+merhaba\\b|\\bmerhaba\\s+arkadaşlar\\b", "name": "Video preamble («bu videoda size göstereceğim»)", "fix": "Delete it and start at the payoff. The first two seconds decide the whole reel."},
+      {"id": "stop-scroll", "regex": "(?im)^\\s*(?:dur\\b|kaydırmayı\\s+bırak|geçme\\b|geçmeden\\s+önce)", "name": "\"Stop scrolling\" opener («kaydırmayı bırak»)", "fix": "The scroll-stop has to be the claim itself. Asking for attention is the tell that you have not earned it."},
+      {"id": "follow-bait", "regex": "(?i)takip\\s+etmeyi\\s+unutma|beğenmeyi\\s+unutma|arkadaşını\\s+etiketle|etiketle\\b|bunu\\s+(?:ihtiyacı\\s+olan|birine)\\s+gönder|daha\\s+fazlası\\s+için\\s+takip", "name": "Reflex follow or tag bait («arkadaşını etiketle»)", "fix": "Ask for the one action this post actually earns. The generic ask trains the audience to ignore every ask."},
+      {"id": "engagement-bait", "regex": "(?im)(?:sizce\\?|katılıyor\\s+musunuz\\?|siz\\s+ne\\s+düşünüyorsunuz\\?|var\\s+mı\\s+benim\\s+gibi\\?)\\s*$", "name": "Reflex engagement bait («katılıyor musunuz?»)", "fix": "Ask a question only you could ask, about the specific thing above it."},
+      {"id": "in-summary", "regex": "(?im)^\\s*(?:sonuç\\s+olarak|özetle|toparlarsak)\\b", "name": "Essay-closer opener («sonuç olarak»)", "fix": "A post does not need a conclusion paragraph."},
+      {"id": "as-an-ai", "regex": "(?i)\\bbir\\s+yapay\\s+zeka\\s+(?:olarak|modeli\\s+olarak)\\b|\\bdil\\s+modeli\\s+olarak\\b", "name": "Model self-reference", "fix": "Delete the sentence."},
+      {"id": "caps-shout", "regex": "\\b[A-ZÇĞİÖŞÜ]{3,}\\b(?:\\s+\\b[A-ZÇĞİÖŞÜ]{3,}\\b){2,}", "name": "Three or more shouted words in a row", "fix": "Caps are a volume knob, not a highlighter. One word, at most."}
+    ]
+  },
+
+  "hook_match": {
+    "1": "\\b(?:bana|bize)\\s+[^.!?]{0,20}\\b(?:mal\\s+oldu|patladı)\\b|\\bkaybettim\\b[^.!?]{0,25}\\d|\\d[\\d.,]*\\s*(?:tl|₺|lira|dolar|\\$)[^.!?]{0,20}\\b(?:kaybettim|mal\\s+oldu)",
+    "2": "^\\s*(?:sakın|asla|\\w+(?:mayı|meyi)\\s+bırak(?:ın)?|bırak(?:ın)?\\s)",
+    "3": "\\b(?:kimse|hiç\\s+kimse)\\s+(?:size\\s+|sana\\s+|bunu\\s+|bundan\\s+)?(?:söylemiyor|söylemez|anlatmıyor|bahsetmiyor|demiyor)\\b|\\bkimsenin\\s+(?:söylemediği|bilmediği)\\b",
+    "5": "\\beskiden\\b[^.!?]{0,30}\\b(?:sürüyordu|alıyordu)\\b|\\b(?:artık|şimdi)\\b[^.!?]{0,20}\\b\\d+\\s*(?:saniye|dakika|sn|dk)\\b|\\b\\d+\\s*(?:saniyede|dakikada)\\b",
+    "7": "\\b(?:en\\s+büyük|en\\s+yaygın|en\\s+sık\\s+yapılan)\\s+hata\\b|\\byanlış\\s+(?:yapıyorsun|yapıyorsunuz|kullanıyorsun|kullanıyorsunuz|temizliyorsun|temizliyorsunuz)\\b",
+    "9": "^\\s*(?:bunu\\s+kaydet|kaydet|çal(?:ın)?|al(?:ın)?\\s+bunu|not\\s+al(?:ın)?)\\b",
+    "10": "^\\s*eğer\\b|^\\s*\\S+(?:ysa|yse|ysan|ysen|sanız|seniz)\\b",
+    "11": "^\\s*\\d+\\s+\\S+|\\b\\d+\\.\\s*(?:madde|sıra)\\b|^\\s*(?:üç|dört|beş|yedi|on)\\s+\\S+",
+    "15": "\\bilk\\s+\\d+\\s+\\S+",
+    "16": "^[^?]{3,110}\\b(?:mı|mi|mu|mü|mısın|misin|musun|müsün|mısınız|misiniz|musunuz|müsünüz)\\?|^\\s*[\"“]?(?:nasıl|neden|niye|ne\\s+zaman|nerede|kim|hangi)\\b[^?]{3,110}\\?",
+    "17": "\\b(?:vs\\.?|karşı|versus)\\b|\\barasındaki\\s+fark\\b",
+    "18": "^\\s*(?:izle(?:yin)?|bakın|bak|şuna\\s+bak(?:ın)?|göstereyim)\\b",
+    "20": "\\b(?:ihtiyacın\\s+yok|ihtiyacınız\\s+yok|gerek\\s+yok|şart\\s+değil)\\b",
+    "23": "^\\s*%\\s?\\d|^\\s*\\d[\\d.,]*\\s?%|%\\s?\\d+",
+    "24": "^\\s*(?:bu|işte)\\s+(?:yeni|benim\\s+yeni)\\b",
+    "26": "^\\s*en\\s+(?:hızlı|kolay|iyi|etkili|ucuz|güçlü)\\b|\\btek\\s+(?:yol|yöntem)\\b"
+  }
+}

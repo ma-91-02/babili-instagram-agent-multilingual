@@ -10,6 +10,8 @@ description: >-
 
 # ig-audit
 
+**Language.** Write in the audience's language and dialect from `language:` in voice.md, or the language the user writes in. Arabic, Russian, Turkish, Polish, Czech and English are supported: follow the `ig-lang` skill (`../ig-lang/SKILL.md`) for dialect, register and local norms, and write it native rather than translating the English examples below.
+
 The only honest source of what works for an account is that account. Every
 rule in every Instagram guide, including the ones in this pack, is a prior.
 The user's own last 30 posts are the evidence.

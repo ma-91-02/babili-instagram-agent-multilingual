@@ -1,18 +1,18 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "instagram-agent-skill",
-  "description": "The Instagram agent skill pack for Claude",
+  "name": "babili-instagram-agent-multilingual",
+  "description": "The Instagram agent skill pack for Claude, in English, Arabic, Russian, Turkish, Polish and Czech",
   "owner": {
-    "name": "Jake Schincariol",
-    "url": "https://opusjake.ai"
+    "name": "Babili",
+    "url": "https://github.com/ma-91-02"
   },
   "plugins": [
     {
-      "name": "instagram-agent",
-      "description": "Thirteen Claude skills that run an Instagram account, including a scored hook panel, a viral research skill, a caption linter and a humanizer.",
+      "name": "babili-instagram-agent",
+      "description": "Fourteen Claude skills that run an Instagram account in six languages, including a scored hook panel, a viral research skill, a caption linter, a humanizer and per-language dialect rules.",
       "source": "./",
       "category": "productivity",
-      "homepage": "https://github.com/Jakeschincariol/instagram-agent-skill"
+      "homepage": "https://github.com/ma-91-02/babili-instagram-agent-multilingual"
     }
   ]
 }

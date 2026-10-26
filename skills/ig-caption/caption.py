@@ -14,18 +14,50 @@ device, the font size and where your line breaks fall, which is exactly why
 you want a margin rather than a caption engineered to end at 125. Change it
 with --truncate if you want to test a tighter one.
 
+Languages: the caption's language is detected, or pass --lang
+en|ar|ru|tr|pl|cs. Hashtags are counted in any script (#تنظيف, #уборка,
+#temizlik), calls to action are recognised in the caption's language, and in
+Arabic a brand written in Latin letters counts as a name.
+
 Usage
   python3 caption.py caption.txt
   python3 caption.py caption.txt --keywords "proposal software,client contract"
+  python3 caption.py caption.txt --lang ar --keywords "منظف مطبخ,إزالة الدهون"
   pbpaste | python3 caption.py -
   python3 caption.py caption.txt --json
 """
 
 import argparse
 import json
+import os
 import re
 import sys
 import textwrap
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def _import_i18n():
+    """Find the shared language layer (skills/ig-lang) wherever it was installed."""
+    parent = os.path.dirname(HERE)
+    dirs = [os.path.join(parent, "ig-lang")]
+    try:
+        dirs += [os.path.join(parent, d) for d in sorted(os.listdir(parent))
+                 if d.endswith("ig-lang") and d != "ig-lang"]
+    except OSError:
+        pass
+    for d in dirs:
+        if os.path.isfile(os.path.join(d, "i18n.py")):
+            sys.path.insert(0, d)
+            try:
+                import i18n as mod
+                return mod
+            except Exception:
+                return None
+    return None
+
+
+i18n = _import_i18n()
 
 LIMIT = 2200             # Instagram's hard caption limit.
 TRUNCATE = 125           # Roughly where the feed cuts to "... more".
@@ -35,7 +67,9 @@ HASHTAG_LIMIT = 5        # Instagram's cap per post or reel since 18 Dec 2025,
                          # rather than many generic ones, can improve both your
                          # content's performance and people's experience".
 
-HASHTAG_RE = re.compile(r"(?:^|\s)(#[A-Za-z0-9_]+)")
+# Hashtags in any script. The original [A-Za-z0-9_] never saw #تنظيف or
+# #уборка, so an Arabic or Russian caption always "passed" the five-tag cap.
+HASHTAG_RE = re.compile(r"(?:^|\s)(#[\wً-ٰٟـ]+)")
 MENTION_RE = re.compile(r"(?:^|\s)(@[A-Za-z0-9_.]+)")
 LINK_RE = re.compile(r"https?://\S+|\bwww\.\S+|\b[a-z0-9-]+\.(?:com|co|io|net|org|ai|app)/\S*",
                      re.IGNORECASE)
@@ -76,7 +110,8 @@ def render_box(window, truncated, out=sys.stdout, width=52):
     print("  +" + "-" * (width + 2 - len(tail) - 2) + f" {tail} " + "+", file=out)
 
 
-def analyse(text, cut=TRUNCATE, keywords=None):
+def analyse(text, cut=TRUNCATE, keywords=None, pack=None):
+    english = pack is None or i18n is None or i18n.is_english(pack)
     text = text.rstrip()
     stripped = text.strip()
     chars = len(stripped)
@@ -89,8 +124,23 @@ def analyse(text, cut=TRUNCATE, keywords=None):
     window = visible_window(stripped, cut)
     truncated = chars > cut
     asks = [name for pattern, name in ASKS if pattern.search(stripped)]
-    filler = [t for t in tags if t.lower() in FILLER_TAGS]
+    filler_set = FILLER_TAGS
+    if not english:
+        # The caption's own language first, then English (DM, link in bio
+        # and friends are borrowed everywhere). One name per kind of ask.
+        local = [a["name"] for a in pack.get("caption", {}).get("asks", [])
+                 if re.search(a["regex"], stripped)]
+        asks = list(dict.fromkeys(local + asks))
+        filler_set = FILLER_TAGS | {t.lower() for t in pack.get("caption", {}).get("filler_tags", [])}
+    filler = [t for t in tags if t.lower() in filler_set]
     keywords = [k.strip() for k in (keywords or []) if k.strip()]
+
+    if english:
+        concrete_in_window = CONCRETE_RE.findall(window)
+        fold = str.lower
+    else:
+        concrete_in_window = i18n.concrete(window, pack)
+        fold = lambda s: i18n.norm(s, pack)
 
     checks = []
 
@@ -113,9 +163,9 @@ def analyse(text, cut=TRUNCATE, keywords=None):
     else:
         add("FIRST LINE", "PASS", f"{len(first_line)} characters, lands whole")
 
-    add("HOOK IS CONCRETE", "PASS" if CONCRETE_RE.search(window) else "WARN",
-        f"{len(CONCRETE_RE.findall(window))} number(s) or name(s) in the visible window"
-        + ("" if CONCRETE_RE.search(window) else " - nothing checkable before the tap"))
+    add("HOOK IS CONCRETE", "PASS" if concrete_in_window else "WARN",
+        f"{len(concrete_in_window)} number(s) or name(s) in the visible window"
+        + ("" if concrete_in_window else " - nothing checkable before the tap"))
 
     if len(tags) > HASHTAG_LIMIT:
         add("HASHTAGS", "FAIL", f"{len(tags)} tags, over Instagram's cap of {HASHTAG_LIMIT}. "
@@ -155,10 +205,10 @@ def analyse(text, cut=TRUNCATE, keywords=None):
         + (" - reads as decoration" if density > 4 else ""))
 
     if keywords:
-        low = stripped.lower()
-        found = [k for k in keywords if k.lower() in low]
-        missing = [k for k in keywords if k.lower() not in low]
-        in_window = [k for k in found if k.lower() in window.lower()]
+        low = fold(stripped)
+        found = [k for k in keywords if fold(k) in low]
+        missing = [k for k in keywords if fold(k) not in low]
+        in_window = [k for k in found if fold(k) in fold(window)]
         status = "PASS" if not missing else ("WARN" if found else "FAIL")
         add("SEARCH TERMS", status,
             f"{len(found)}/{len(keywords)} present"
@@ -169,7 +219,7 @@ def analyse(text, cut=TRUNCATE, keywords=None):
     warns = sum(1 for c in checks if c["status"] == "WARN")
     verdict = "FIX" if fails else ("REVIEW" if warns else "READY")
 
-    return {
+    out = {
         "characters": chars, "limit": LIMIT, "truncate_at": cut,
         "visible": window, "truncated": truncated,
         "first_line_chars": len(first_line),
@@ -177,11 +227,15 @@ def analyse(text, cut=TRUNCATE, keywords=None):
         "emoji": len(emoji), "asks": asks,
         "checks": checks, "verdict": verdict,
     }
+    if not english:
+        out["lang"] = pack["code"]
+    return out
 
 
 def render(a, out=sys.stdout):
     head = (f"CAPTION LINT  ·  {a['characters']} / {a['limit']} chars  ·  "
-            f"{len(a['hashtags'])} hashtags  ·  {len(a['asks'])} ask(s)")
+            f"{len(a['hashtags'])} hashtags  ·  {len(a['asks'])} ask(s)"
+            + (f"  ·  {a['lang']}" if a.get("lang") else ""))
     print("\n" + head, file=out)
     print("=" * max(len(head), 62), file=out)
     render_box(a["visible"], a["truncated"], out=out)
@@ -198,11 +252,15 @@ def main():
     ap.add_argument("--truncate", type=int, default=TRUNCATE,
                     help=f"characters shown before '... more' (default {TRUNCATE})")
     ap.add_argument("--keywords", default="", help="comma-separated terms you want to be found for")
+    ap.add_argument("--lang", default="auto",
+                    help="en, ar, ru, tr, pl, cs, or auto to detect (default)")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
     raw = sys.stdin.read() if args.input == "-" else open(args.input, encoding="utf-8").read()
-    a = analyse(raw, cut=args.truncate, keywords=args.keywords.split(","))
+    pack = i18n.resolve(args.lang, raw) if i18n else None
+    a = analyse(raw, cut=args.truncate, keywords=args.keywords.replace("،", ",").split(","),
+                pack=pack)
     if args.json:
         print(json.dumps(a, indent=2, ensure_ascii=False))
     else:

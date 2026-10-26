@@ -9,6 +9,8 @@ description: >-
 
 # ig-plan
 
+**Language.** Write in the audience's language and dialect from `language:` in voice.md, or the language the user writes in. Arabic, Russian, Turkish, Polish, Czech and English are supported: follow the `ig-lang` skill (`../ig-lang/SKILL.md`) for dialect, register and local norms, and write it native rather than translating the English examples below.
+
 The control room. Everything else in this pack executes; this decides what gets
 executed. Run it once a week, on the same day.
 

@@ -23,18 +23,52 @@ Instagram shows it to. Trust the retention graph over this script.
 
 Each check returns 0 to 100. Higher is better.
 
+Languages: English, Arabic, Russian, Turkish, Polish and Czech. Each line is
+detected on its own, or pass --lang. English runs the original checks
+unchanged. The other languages run the same five checks with the word lists
+in ../ig-lang/lang/<code>.json; those thresholds are first estimates, not
+measured on a corpus the way the English ones were.
+
 Usage
   python3 hookscore.py hooks.txt              # one hook per line, ranked
   python3 hookscore.py --hook "I lost $18,000 on one missing contract."
+  python3 hookscore.py --hook "محد يكلك إن الطباخ يخرب بعد 6 أشهر"
+  python3 hookscore.py hooks.txt --lang ru
   pbpaste | python3 hookscore.py -
   python3 hookscore.py hooks.txt --json
 """
 
 import argparse
 import json
+import os
 import re
 import statistics
 import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def _import_i18n():
+    """Find the shared language layer (skills/ig-lang) wherever it was installed."""
+    parent = os.path.dirname(HERE)
+    dirs = [os.path.join(parent, "ig-lang")]
+    try:
+        dirs += [os.path.join(parent, d) for d in sorted(os.listdir(parent))
+                 if d.endswith("ig-lang") and d != "ig-lang"]
+    except OSError:
+        pass
+    for d in dirs:
+        if os.path.isfile(os.path.join(d, "i18n.py")):
+            sys.path.insert(0, d)
+            try:
+                import i18n as mod
+                return mod
+            except Exception:
+                return None
+    return None
+
+
+i18n = _import_i18n()
 
 WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
 NUMBER_RE = re.compile(
@@ -232,13 +266,160 @@ def run(text):
     return results, overall, verdict, flags
 
 
+# --------------------------------------------------------------------------
+# The same five checks for the other languages. Same scoring shape, same
+# verdict rule, word lists from the language pack.
+# --------------------------------------------------------------------------
+
+DEAL_MESSAGES = {
+    "stop": "Opens with \"stop scrolling\". Asking for attention proves you have not earned it.",
+    "preamble": "Video preamble. Delete it and open on the payoff.",
+    "greeting": "Greeting. Nobody came to the feed to be greeted.",
+}
+HASHTAG_ANY_RE = re.compile(r"(?:^|\s)#[\wً-ٰٟـ]+")
+PRICE_RE = re.compile(r"[$€£₺₽]\s?\d|\d[\d,٬.]*\s?(?:₺|₽|€|zł|kč|tl)\b", re.IGNORECASE)
+
+
+def _i_length(text, pack):
+    w = i18n.words(text)
+    n = len(w)
+    lo, hi = pack.get("hook_words", [5, 12])
+    wps = pack.get("wpm", 165) / 60.0
+    secs = n / wps
+    chars = len(text.strip())
+    if lo <= n <= hi:
+        score = 100.0
+    elif n < lo:
+        score = clamp(100 - (lo - n) * 20)
+    else:
+        score = clamp(100 - (n - hi) * 11)
+    if chars > pack.get("hook_chars", 60):
+        score -= 12
+    return clamp(score), f"{n} words, {chars} chars, ~{secs:.1f}s spoken (want {lo}-{hi} words)"
+
+
+def _i_specificity(text, pack):
+    nums = i18n.numbers(text)
+    propers = sorted(set(i18n.propers(text, pack)))
+    spoken = i18n.spoken_number_hits(text, pack)
+    hits = len(nums) + len(propers) + len(spoken)
+    score = 15.0 if hits == 0 else clamp(45 + hits * 30)
+    found = ", ".join(nums[:2] + propers[:2] + spoken[:2])
+    return score, (f"{hits} concrete marker(s)" + (f": {found}" if found else
+                   " - no number, no name, nothing checkable"))
+
+
+def _i_stakes(text, pack):
+    stakes = i18n.terms(pack, "hook", "stakes")
+    toks = i18n.words(text)
+    markers = sorted({i18n.norm(t, pack) for t in toks if stakes.hit(t)})
+    money = i18n.terms(pack, "numbers", "money")
+    if PRICE_RE.search(text) or (i18n.numbers(text) and any(money.hit(t) for t in toks)):
+        markers.append("a price")
+    n = len(markers)
+    score = {0: 20.0, 1: 70.0}.get(n, 100.0)
+    detail = f"{n} tension marker(s)" + (f": {', '.join(markers[:4])}" if markers else
+                                         " - nothing is at stake in this line")
+    return clamp(score), detail
+
+
+def _i_frontload(text, pack):
+    w = i18n.words(text)
+    if not w:
+        return 0.0, "empty"
+    weak = i18n.terms(pack, "hook", "weak_openers")
+    penalty, hit_opener = 0, None
+    if weak.hit(w[0]):
+        penalty, hit_opener = 30, w[0]
+    elif weak.phrase_hit(w[:3]):
+        penalty, hit_opener = 30, " ".join(w[:2])
+    stakes = i18n.terms(pack, "hook", "stakes")
+    spoken = i18n.terms(pack, "numbers", "spoken")
+    money = i18n.terms(pack, "numbers", "money")
+    cased = pack.get("cased", True)
+    payload = None
+    for i, token in enumerate(w):
+        is_name = (i and cased and token[:1].isupper() and len(token) >= 3) or \
+                  (not cased and re.match(r"^[A-Za-z]{2,}", token))
+        if (stakes.hit(token) or spoken.hit(token) or money.hit(token)
+                or any(c.isdigit() for c in token) or is_name):
+            payload = i
+            break
+    if payload is None:
+        base, where = 30.0, "no payload word anywhere in the line"
+    elif payload <= 3:
+        base, where = 100.0, f"payload at word {payload + 1}"
+    elif payload <= 6:
+        base, where = 70.0, f"payload at word {payload + 1}, could move forward"
+    else:
+        base, where = 40.0, f"payload at word {payload + 1}, too late"
+    detail = where + (f"; weak opener \"{hit_opener}\"" if hit_opener else "")
+    return clamp(base - penalty), detail
+
+
+def _i_address(text, pack):
+    a = pack.get("hook", {}).get("address", {})
+    w = i18n.words(text)
+    you = i18n.terms(pack, "hook", "address", "you")
+    me = i18n.terms(pack, "hook", "address", "me")
+    imper = i18n.terms(pack, "hook", "imperatives")
+    if any(you.hit(t) or i18n.suffix_hit(t, pack, a.get("you_suffixes"), a.get("you_exceptions"))
+           for t in w) or you.phrase_hit(w):
+        return 100.0, "speaks to the viewer"
+    if w and imper.hit(w[0]):
+        return 90.0, f"imperative opener (\"{w[0]}\")"
+    if any(me.hit(t) or i18n.suffix_hit(t, pack, a.get("me_suffixes"), a.get("me_exceptions"))
+           for t in w) or me.phrase_hit(w):
+        return 70.0, "first person, no viewer named"
+    return 35.0, "third person, nobody in the room"
+
+
+def run_i18n(text, pack):
+    results = {
+        "LENGTH": _i_length(text, pack),
+        "SPECIFICITY": _i_specificity(text, pack),
+        "STAKES": _i_stakes(text, pack),
+        "FRONTLOAD": _i_frontload(text, pack),
+        "ADDRESS": _i_address(text, pack),
+    }
+    flags = []
+    for d in pack.get("hook", {}).get("dealbreakers", []):
+        if re.search(d["regex"], text):
+            flags.append(DEAL_MESSAGES.get(d["type"], d.get("message", d["type"])))
+    if HASHTAG_ANY_RE.search(text):
+        flags.append("Hashtag in the hook. Hashtags belong at the bottom of the caption, if anywhere.")
+    if EMOJI_RE.search(text):
+        flags.append("Emoji in the hook. On-screen text at hook size has room for words or for an emoji, not both.")
+    scores = [results[c][0] for c in CHECKS]
+    overall = clamp(statistics.mean(scores) * 0.6 + min(scores) * 0.4 - len(flags) * 15)
+    verdict = "STRONG" if overall >= 70 and min(scores) >= 55 and not flags else (
+        "OK" if overall >= 50 else "WEAK")
+    return results, overall, verdict, flags
+
+
+def pack_for(text, lang="auto"):
+    """The language pack for this text, or None when English (or no i18n)."""
+    if i18n is None:
+        return None
+    pack = i18n.resolve(lang, text)
+    return None if i18n.is_english(pack) else pack
+
+
+def score(text, lang="auto"):
+    """Score one hook in whatever language it is in. Used by swipe.py too."""
+    pack = pack_for(text, lang)
+    if pack is None:
+        return run(text) + ("en",)
+    return run_i18n(text, pack) + (pack["code"],)
+
+
 def bar(score, width=24):
     filled = round(score / 100 * width)
     return "#" * filled + "." * (width - filled)
 
 
-def render_one(text, results, overall, verdict, flags, out=sys.stdout):
-    print("\nHOOK SCORE", file=out)
+def render_one(text, results, overall, verdict, flags, out=sys.stdout, lang="en"):
+    print("\nHOOK SCORE" + (f"  ·  {lang}" if lang != "en" else ""), file=out)
     print("=" * 62, file=out)
     print(f"  \"{text.strip()}\"\n", file=out)
     for name in CHECKS:
@@ -260,7 +441,8 @@ def render_table(rows, out=sys.stdout):
     for i, r in enumerate(rows, 1):
         mark = "->" if i == 1 else "  "
         hook = r["hook"] if len(r["hook"]) <= 62 else r["hook"][:59] + "..."
-        print(f"{mark} {r['score']:5.1f} {r['verdict']:<7} {hook}", file=out)
+        tag = f"[{r['lang']}] " if r.get("lang", "en") != "en" else ""
+        print(f"{mark} {r['score']:5.1f} {r['verdict']:<7} {tag}{hook}", file=out)
         print(f"        weakest: {r['weakest']} ({r['checks'][r['weakest']]['score']:.0f})", file=out)
         for f in r["flags"]:
             print(f"        dealbreaker: {f}", file=out)
@@ -272,6 +454,8 @@ def main():
     ap = argparse.ArgumentParser(description="Score a Reel hook on five properties.")
     ap.add_argument("input", nargs="?", default="-", help="file with one hook per line, or -")
     ap.add_argument("--hook", help="score a single hook given on the command line")
+    ap.add_argument("--lang", default="auto",
+                    help="en, ar, ru, tr, pl, cs, or auto to detect each line (default)")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
@@ -286,23 +470,26 @@ def main():
 
     payload = []
     for line in lines:
-        results, overall, verdict, flags = run(line)
-        payload.append({
+        results, overall, verdict, flags, lang = score(line, args.lang)
+        row = {
             "hook": line,
             "checks": {k: {"score": round(v[0], 1), "detail": v[1]} for k, v in results.items()},
             "weakest": min(CHECKS, key=lambda c: results[c][0]),
             "flags": flags,
             "score": round(overall, 1),
             "verdict": verdict,
-        })
+        }
+        if lang != "en":
+            row["lang"] = lang
+        payload.append(row)
 
     if args.json:
         print(json.dumps(payload if len(payload) > 1 else payload[0], indent=2, ensure_ascii=False))
         return
 
     if len(payload) == 1:
-        results, overall, verdict, flags = run(lines[0])
-        render_one(lines[0], results, overall, verdict, flags)
+        results, overall, verdict, flags, lang = score(lines[0], args.lang)
+        render_one(lines[0], results, overall, verdict, flags, lang=lang)
     else:
         render_table(sorted(payload, key=lambda r: -r["score"]))
 

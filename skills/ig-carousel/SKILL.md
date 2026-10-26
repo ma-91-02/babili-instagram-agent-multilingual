@@ -9,6 +9,8 @@ description: >-
 
 # ig-carousel
 
+**Language.** Write in the audience's language and dialect from `language:` in voice.md, or the language the user writes in. Arabic, Russian, Turkish, Polish, Czech and English are supported: follow the `ig-lang` skill (`../ig-lang/SKILL.md`) for dialect, register and local norms, and write it native rather than translating the English examples below.
+
 Carousels are the highest-dwell format on the grid, because a swipe is an
 interaction and a scroll is not. They also get a second chance: Instagram can
 show a carousel again starting from a later slide to someone who did not engage

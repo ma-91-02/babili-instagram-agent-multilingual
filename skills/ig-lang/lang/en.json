@@ -1,0 +1,12 @@
+{
+  "name": "English",
+  "native": "English",
+  "note": "English is the reference language. The scripts keep their original English code paths, word lists and lexicon (ig-human/slop.json), so this pack only carries what the shared layer needs to know about the language.",
+  "rtl": false,
+  "cased": true,
+  "sentence_end": ".!?",
+  "wpm": 165,
+  "hook_words": [5, 12],
+  "hook_chars": 60,
+  "typography_native": []
+}

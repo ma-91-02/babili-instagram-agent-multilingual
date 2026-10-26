@@ -10,6 +10,8 @@ description: >-
 
 # ig-repurpose
 
+**Language.** Write in the audience's language and dialect from `language:` in voice.md, or the language the user writes in. Arabic, Russian, Turkish, Polish, Czech and English are supported: follow the `ig-lang` skill (`../ig-lang/SKILL.md`) for dialect, register and local norms, and write it native rather than translating the English examples below.
+
 One good long asset contains four to six posts. Most people extract one and
 throw the rest away.
 

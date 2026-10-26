@@ -10,6 +10,8 @@ description: >-
 
 # ig-dm
 
+**Language.** Write in the audience's language and dialect from `language:` in voice.md, or the language the user writes in. Arabic, Russian, Turkish, Polish, Czech and English are supported: follow the `ig-lang` skill (`../ig-lang/SKILL.md`) for dialect, register and local norms, and write it native rather than translating the English examples below.
+
 Instagram DMs are the only place on the platform where money actually changes
 hands, and they are also where most accounts burn the goodwill their content
 earned. The difference is entirely about who moved first.

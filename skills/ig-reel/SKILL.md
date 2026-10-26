@@ -11,6 +11,8 @@ description: >-
 
 # ig-reel
 
+**Language.** Write in the audience's language and dialect from `language:` in voice.md, or the language the user writes in. Arabic, Russian, Turkish, Polish, Czech and English are supported: follow the `ig-lang` skill (`../ig-lang/SKILL.md`) for dialect, register and local norms, and write it native rather than translating the English examples below. The tools in this folder detect the language themselves; pass `--lang ar|ru|tr|pl|cs|en` when the text is short or mixed, and relay their English-labelled reports in the user's language.
+
 Turns one raw idea into a Reel that somebody finishes.
 
 Two tools live in this folder and they both actually run. Use them. Do not

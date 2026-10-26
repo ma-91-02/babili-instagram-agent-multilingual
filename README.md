@@ -1,7 +1,17 @@
-# The Instagram agent skill
+# The Instagram agent skill, multilingual
 
-Thirteen Claude skills that run an Instagram account. Free, MIT, no signup, no
-API key, nothing to connect.
+**English · العربية · Русский · Türkçe · Polski · Čeština**
+
+Fourteen Claude skills that run an Instagram account, in six languages. Free,
+MIT, no signup, no API key, nothing to connect.
+
+This is a multilingual fork of Jake Schincariol's
+[instagram-agent-skill](https://github.com/Jakeschincariol/instagram-agent-skill).
+The original thirteen skills are here, unchanged in what they do. What this
+fork adds is the fourteenth, `ig-lang`, and a language layer under the five
+Python tools, so they work on Arabic, Russian, Turkish, Polish and Czech text
+instead of seeing no words in it. [What changed](#what-this-fork-changed) is
+listed below. Arabic readers: [README.ar.md](README.ar.md).
 
 One of them writes your Reels off 26 hook formulas and scores the hook before
 you waste a take on it. One goes and finds the reels that are actually working
@@ -17,12 +27,30 @@ see it.
 
 **Nothing gets posted until you say yes.** These skills write. You post.
 
+## Languages
+
+| | language | what the tools understand |
+|---|---|---|
+| en | English | the original checks, unchanged |
+| ar | Arabic | Iraqi, Gulf, Levantine, Egyptian and MSA; right-to-left text; clitics (و، ف، ب، ل، ال); ٠-٩ digits; Latin brand names counted as names |
+| ru | Russian | inflected stems, ё/е, the dash and «ёлочки» kept as house style |
+| tr | Turkish | suffix stems, dotted/dotless i, %80 written before the number |
+| pl | Polish | inflected stems, „…” quotes and the dash kept as house style |
+| cs | Czech | inflected stems, „…“ quotes kept, *jsem/jsme* counted as first person |
+
+Every script detects the language of what it is given, line by line where
+that matters, or takes `--lang ar|ru|tr|pl|cs|en`. Set your language and
+dialect once in `voice.md` and every skill writes in it. The `ig-lang` skill
+holds the rules for dialect, register (ты/вы, sen/siz, ty/vy) and local
+norms, and tells Claude to write native rather than translate the English
+examples.
+
 ## Install
 
 Paste this into Claude:
 
 ```
-https://github.com/Jakeschincariol/instagram-agent-skill
+https://github.com/ma-91-02/babili-instagram-agent-multilingual
 
 Install this skill, then confirm /ig-reel works.
 ```
@@ -30,16 +58,20 @@ Install this skill, then confirm /ig-reel works.
 Or do it yourself, in Claude Code:
 
 ```bash
-git clone https://github.com/Jakeschincariol/instagram-agent-skill.git
-cp -r instagram-agent-skill/skills/ig-* ~/.claude/skills/
+git clone https://github.com/ma-91-02/babili-instagram-agent-multilingual.git
+cp -r babili-instagram-agent-multilingual/skills/ig-* ~/.claude/skills/
 ```
 
 Or as a plugin:
 
 ```
-/plugin marketplace add Jakeschincariol/instagram-agent-skill
-/plugin install instagram-agent
+/plugin marketplace add ma-91-02/babili-instagram-agent-multilingual
+/plugin install babili-instagram-agent
 ```
+
+In the Claude app, add it as a plugin from this repository, or upload the
+`skills/ig-*` folders as skills. Keep `ig-lang` next to the others: the
+Python tools find it as a sibling folder.
 
 Project-local instead of global: copy the same folders into your repo's
 `.claude/skills/`. No Claude Code at all? Paste any single `SKILL.md` at the top
@@ -52,7 +84,7 @@ reels and say "write my voice.md from these". Every skill reads that file. It
 matters more here than on other platforms, because you have to say the words
 out loud.
 
-## The thirteen
+## The fourteen
 
 | command | what it does |
 | --- | --- |
@@ -68,6 +100,7 @@ out loud.
 | `/ig-reply` | The thread under your own post. Sorts into keyword / lead / substance / question / support / noise, then writes in that order. |
 | `/ig-dm` | The keyword delivery, the first message, the collab pitch, and the two follow-ups. Two. |
 | `/ig-repurpose` | One video, podcast or newsletter into a week of reels and carousels that each stand alone. |
+| `/ig-lang` | The language rules: which language and dialect to write in, register (ты/вы, sen/siz), local norms, and the shared code and word lists the five tools use outside English. |
 | `/ig-audit` | Post-mortem on what you already posted. Ranks by outlier multiple and sends per reach, not views. |
 
 ## The five tools that actually run
@@ -221,6 +254,9 @@ SWIPE FILE  ·  4 reels  ·  4 accounts  ·  baseline: account median
 
 ## What I actually measured, which is the part worth reading
 
+*This section is the original author's, about the English tools. The
+non-English packs are covered in [What this fork changed](#what-this-fork-changed).*
+
 I did not want to publish a hook scorer on the claim that it feels right, so I
 tested it. The corpus is **74 real short-form hooks**: the first three seconds
 of the auto-caption track from the top eight and bottom eight performing shorts
@@ -310,6 +346,54 @@ your name. If a draft needs a number you have not given, it comes back with
 until the fact got checked. If something here contradicts what Instagram is
 doing when you read it, Instagram is right.
 
+## What this fork changed
+
+**Nothing in the English path moved.** English text runs the original code,
+word lists and lexicon. `tests/run_tests.py` checks that the hook scores for
+the examples above still come out at 85.6, 81.4, 54.4 and 9.6, and the
+caption and swipe-file examples still read the same.
+
+**Added**
+
+- `skills/ig-lang/` - the fourteenth skill. `SKILL.md` holds the rules for
+  writing in each language (dialect, register, digits, currency, "write it
+  native, never translate the template"). `i18n.py` is the shared language
+  layer: detection, Unicode word tokens, normalisation (Arabic letter variants
+  and clitics, Turkish i, Russian ё), names in any script, numbers in any digit
+  script. `lang/<code>.json` holds each language's word lists: spoken numbers,
+  stakes, weak openers, imperatives, address forms, dealbreakers (greetings,
+  preambles, "stop scrolling"), calls to action, filler hashtags, the stock
+  phrase lexicon, structural tells, and patterns for 16 of the 26 hook
+  formulas.
+- `--lang` on all five tools, with auto-detection by default.
+- `tests/run_tests.py` - 104 checks across six languages.
+- A `Language` section in `templates/voice.md` and a language rule at the top
+  of every skill.
+
+**Fixed, in every language including English**
+
+- Emoji. The humanizer deleted every zero-width joiner, which splits 👨‍👩‍👧
+  into three faces and ❤️‍🔥 into two emoji. A joiner inside an emoji sequence
+  is now kept, and `detect.py` no longer counts it as a fingerprint.
+- Right-to-left text. Direction marks (LRM, RLM, ALM) were deleted, which can
+  move a Latin brand name or a number to the wrong end of an Arabic line. They
+  are kept when the text contains a right-to-left script.
+- Hashtags in other scripts. `caption.py` only saw `#[A-Za-z0-9_]`, so a
+  caption with six Arabic hashtags passed the five-tag cap.
+- A deleted closing sentence no longer leaves `.!` or a line holding only `!`.
+- The hashtag-wall fix text mentioned LinkedIn; it now gives Instagram's cap.
+
+**Honest limits.** The English thresholds were measured by the original
+author on 74 real hooks. The Arabic, Russian, Turkish, Polish and Czech lists
+and targets (speaking rate, hook length, pronoun density) were drafted with
+Claude and checked against the examples in the tests. They have not been
+measured on a corpus of real Reels, and they have not yet been reviewed by
+native-speaker marketers in each market. In the tests they catch greetings,
+preambles, stock phrases, missing numbers and hooks that run long. They do not pick winners,
+in any language. In inflected languages many stock words are flagged rather
+than replaced, because the right replacement depends on case, gender and
+number in that sentence.
+
 ## Files
 
 ```
@@ -323,12 +407,19 @@ skills/ig-human/humanize.py        the three cleaning passes
 skills/ig-human/detect.py          the five-check panel
 skills/ig-viral/swipe.py           outlier ranking and formula classification
 skills/ig-profile/rubric.json      the 100-point profile score
+skills/ig-lang/SKILL.md            the language rules every other skill follows
+skills/ig-lang/i18n.py             the shared language layer for the five tools
+skills/ig-lang/lang/<code>.json    one word-list pack per language: en ar ru tr pl cs
 templates/voice.md                 your voice profile. Fill this in first.
+tests/run_tests.py                 104 checks across six languages
 ```
 
 ## Credit
 
-Made by Jake Schincariol, [opusjake.ai](https://opusjake.ai).
+The original skills, tools, hook formulas and measurements are by Jake
+Schincariol, [opusjake.ai](https://opusjake.ai), from
+[instagram-agent-skill](https://github.com/Jakeschincariol/instagram-agent-skill).
+The multilingual layer, `ig-lang` and the tests are by Babili.
 
 Sibling repo, same idea for a different platform:
 [linkedin-agent-skill](https://github.com/Jakeschincariol/linkedin-agent-skill).

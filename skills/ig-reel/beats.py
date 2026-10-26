@@ -13,18 +13,52 @@ are close enough to plan an edit and not a substitute for recording it. Set
 your own rate with --wpm once you have timed yourself reading a script out
 loud: most people land between 150 and 200, and the default here is 165.
 
+Languages: the script is detected (or pass --lang en|ar|ru|tr|pl|cs). Words
+per minute differ a lot between languages, because a Turkish or Arabic word
+carries more than an English one, so the default rate comes from the language
+pack (English 165, Arabic 135, Russian 140, Turkish 120, Polish 135, Czech
+140). Those non-English rates are starting estimates. Time yourself once and
+pass --wpm.
+
 Usage
   python3 beats.py script.txt
   python3 beats.py script.txt --target 30
   python3 beats.py script.txt --wpm 185 --target 45
+  python3 beats.py script.txt --lang ar --target 30
   pbpaste | python3 beats.py -
   python3 beats.py script.txt --json
 """
 
 import argparse
 import json
+import os
 import re
 import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def _import_i18n():
+    """Find the shared language layer (skills/ig-lang) wherever it was installed."""
+    parent = os.path.dirname(HERE)
+    dirs = [os.path.join(parent, "ig-lang")]
+    try:
+        dirs += [os.path.join(parent, d) for d in sorted(os.listdir(parent))
+                 if d.endswith("ig-lang") and d != "ig-lang"]
+    except OSError:
+        pass
+    for d in dirs:
+        if os.path.isfile(os.path.join(d, "i18n.py")):
+            sys.path.insert(0, d)
+            try:
+                import i18n as mod
+                return mod
+            except Exception:
+                return None
+    return None
+
+
+i18n = _import_i18n()
 
 WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
 SENT_RE = re.compile(r"[^.!?]+[.!?]*")
@@ -57,7 +91,7 @@ def tc(seconds):
     return f"{int(m)}:{s:04.1f}"
 
 
-def split_beats(raw, wps):
+def split_beats(raw, wps, words=words, sent_re=SENT_RE):
     """One line is one beat, unless a line is too long to be one."""
     beats = []
     for line in [l.strip() for l in raw.splitlines()]:
@@ -68,7 +102,7 @@ def split_beats(raw, wps):
             continue
         # Long paragraph: break it at sentence ends so the timings mean
         # something, and let the report say it was split.
-        parts = [p.strip() for p in SENT_RE.findall(line) if p.strip()]
+        parts = [p.strip() for p in sent_re.findall(line) if p.strip()]
         buf = ""
         for part in parts:
             candidate = (buf + " " + part).strip()
@@ -82,9 +116,39 @@ def split_beats(raw, wps):
     return beats
 
 
-def analyse(raw, wpm=165, target=None):
+def _toolkit(pack):
+    """The word, sentence, concreteness and loop-matching functions to use.
+
+    English gets the original ones untouched. Other languages get Unicode
+    tokens, their own sentence punctuation, their own stopwords, and a loose
+    stem for the loop check, because 'контракт' in the hook and 'контракта'
+    at the end are the same word to a viewer.
+    """
+    if pack is None or i18n is None or i18n.is_english(pack):
+        return {
+            "words": words, "sent_re": SENT_RE,
+            "concrete": lambda t: len(CONCRETE_RE.findall(t)),
+            "stop": STOPWORDS, "key": lambda w: w.lower(), "show": lambda w: pretty(w.lower()),
+        }
+    stop = {i18n.norm(s, pack) for s in pack.get("beats", {}).get("stopwords", [])}
+
+    def key(w):
+        f = i18n.forms(w, pack)
+        k = min(f, key=len) if pack.get("code") == "ar" else f[0]
+        return k[:5] if len(k) > 5 and pack.get("code") != "ar" else k
+
+    return {
+        "words": i18n.words, "sent_re": i18n.sentence_re(pack, newline=False),
+        "concrete": lambda t: len(i18n.concrete(t, pack)),
+        "stop": stop, "key": key, "show": lambda w: w,
+    }
+
+
+def analyse(raw, wpm=165, target=None, pack=None):
+    kit = _toolkit(pack)
+    words = kit["words"]
     wps = wpm / 60.0
-    beats = split_beats(raw, wps)
+    beats = split_beats(raw, wps, words=words, sent_re=kit["sent_re"])
     if not beats:
         return None
 
@@ -98,7 +162,7 @@ def analyse(raw, wpm=165, target=None):
             "dur": round(dur, 2),
             "words": n,
             "text": text,
-            "concrete": len(CONCRETE_RE.findall(text)),
+            "concrete": kit["concrete"](text),
             "label": "",
             "flags": [],
         })
@@ -146,9 +210,10 @@ def analyse(raw, wpm=165, target=None):
             run, start = 0, None
 
     # Does the last line hand you back to the first one?
-    first = {w.lower() for w in words(rows[0]["text"]) if w.lower() not in STOPWORDS}
-    last = {w.lower() for w in words(rows[-1]["text"]) if w.lower() not in STOPWORDS}
-    loop = sorted(pretty(w) for w in first & last)
+    key, stop = kit["key"], kit["stop"]
+    first = {key(w): w for w in words(rows[0]["text"]) if key(w) not in stop}
+    last = {key(w) for w in words(rows[-1]["text"]) if key(w) not in stop}
+    loop = sorted(kit["show"](first[k]) for k in set(first) & last)
     if loop:
         notes.append(f"Loops: the last beat repeats \"{', '.join(loop[:3])}\" from the hook. "
                      "Second watches are free reach.")
@@ -166,18 +231,22 @@ def analyse(raw, wpm=165, target=None):
             notes.append(f"{-delta:.1f}s under target. Either add {int(-delta * wps)} words "
                          "or shoot it short. Short is usually right.")
 
-    return {
+    out = {
         "wpm": wpm, "target": target,
         "total_seconds": round(total, 2),
         "total_words": sum(r["words"] for r in rows),
         "beats": rows,
         "notes": notes,
     }
+    if pack is not None and i18n is not None and not i18n.is_english(pack):
+        out["lang"] = pack["code"]
+    return out
 
 
 def render(a, out=sys.stdout):
     head = (f"BEAT SHEET  ·  {a['total_words']} words  ·  ~{a['total_seconds']:.1f}s "
-            f"at {a['wpm']} wpm" + (f"  ·  target {a['target']}s" if a["target"] else ""))
+            f"at {a['wpm']} wpm" + (f"  ·  target {a['target']}s" if a["target"] else "")
+            + (f"  ·  {a['lang']}" if a.get("lang") else ""))
     print("\n" + head, file=out)
     print("=" * max(len(head), 72), file=out)
     for r in a["beats"]:
@@ -194,13 +263,18 @@ def render(a, out=sys.stdout):
 def main():
     ap = argparse.ArgumentParser(description="Time a Reel script into a beat sheet.")
     ap.add_argument("input", nargs="?", default="-", help="script file, or - for stdin")
-    ap.add_argument("--wpm", type=float, default=165, help="speaking rate (default 165)")
+    ap.add_argument("--wpm", type=float, default=None,
+                    help="speaking rate (default: the language's, 165 for English)")
     ap.add_argument("--target", type=float, help="target length in seconds")
+    ap.add_argument("--lang", default="auto",
+                    help="en, ar, ru, tr, pl, cs, or auto to detect (default)")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
     raw = sys.stdin.read() if args.input == "-" else open(args.input, encoding="utf-8").read()
-    a = analyse(raw, wpm=args.wpm, target=args.target)
+    pack = i18n.resolve(args.lang, raw) if i18n else None
+    wpm = args.wpm or (pack.get("wpm", 165) if pack else 165)
+    a = analyse(raw, wpm=wpm, target=args.target, pack=pack)
     if not a:
         print("empty script", file=sys.stderr)
         sys.exit(2)

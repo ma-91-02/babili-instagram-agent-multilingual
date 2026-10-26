@@ -10,6 +10,8 @@ description: >-
 
 # ig-story
 
+**Language.** Write in the audience's language and dialect from `language:` in voice.md, or the language the user writes in. Arabic, Russian, Turkish, Polish, Czech and English are supported: follow the `ig-lang` skill (`../ig-lang/SKILL.md`) for dialect, register and local norms, and write it native rather than translating the English examples below.
+
 Stories are not a smaller feed. The feed is how strangers find you. Stories are
 how the people who already follow you decide whether you are a person worth
 buying from, and they are the only surface on Instagram where a tap turns into

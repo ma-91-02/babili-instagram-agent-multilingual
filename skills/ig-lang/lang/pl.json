@@ -1,0 +1,166 @@
+{
+  "name": "Polish",
+  "native": "Polski",
+  "note": "Polish is inflected, so most word lists use stems: an entry ending in '*' matches every ending ('straci*' covers straciłem, straciła, stracili). The Polish low-high quotes („…”) and the dash used as a dash are correct house style and are never stripped or counted as a machine tell. Thresholds are first estimates, not measured on a corpus. Edit freely.",
+  "rtl": false,
+  "cased": true,
+  "sentence_end": ".!?…",
+  "wpm": 135,
+  "hook_words": [4, 10],
+  "hook_chars": 70,
+  "typography_native": ["—", "–", "„", "”", "«", "»"],
+
+  "numbers": {
+    "spoken": [
+      "zero", "dwa", "dwie", "trzy", "cztery", "pięć", "sześć", "siedem", "osiem",
+      "dziewięć", "dziesięć", "dwadzieścia", "trzydzieści", "sto", "tysiąc*", "tysięc*",
+      "milion*", "miliard*", "połow*", "podwójn*", "dwukrotn*"
+    ],
+    "money": [
+      "zł", "złot*", "pln", "euro", "dolar*", "procent*", "pensj*", "wypłat*", "zysk*",
+      "darmow*", "cen*", "koszt*", "rabat*", "promocj*"
+    ]
+  },
+
+  "hook": {
+    "stakes": [
+      "nie", "nigdy", "nikt", "nic", "przestań*", "stop", "błąd", "błędy", "błęd*", "straci*",
+      "strat*", "kosztował*", "zepsu*", "zniszcz*", "porażk*", "zakaz*", "gorsz*", "najgorsz*",
+      "nienawidz*", "kłam*", "prawd*", "sekret*", "tajemnic*", "ukryt*", "problem*", "ryzyk*",
+      "niebezpiecz*", "ostrzeż*", "żałuj*", "ale", "lecz", "zamiast", "przed", "dopóki",
+      "oprócz", "tylko", "bez", "już", "wciąż", "nadal", "właściwie", "naprawdę", "pierwsz*",
+      "darmo", "rysy", "zarysow*", "plam*"
+    ],
+    "weak_openers": [
+      "więc", "no", "ok", "okej", "hej", "cześć", "siema", "witam", "witajcie", "dzisiaj",
+      "dziś", "w tym", "chciałem", "chciałam", "chcę", "słuchajcie", "kochani", "wiecie",
+      "to jest", "jest", "kiedy", "dzień dobry"
+    ],
+    "imperatives": [
+      "przestań*", "stop", "zapisz*", "patrz*", "zobacz*", "spróbuj*", "usuń*", "użyj*",
+      "zapamiętaj*", "pisz", "napisz*", "zacznij*", "nigdy", "zawsze", "nie", "zrób*",
+      "sprawdź*", "rzuć*", "psiknij*", "przetrzyj*", "wyrzuć*"
+    ],
+    "address": {
+      "you": [
+        "ty", "ci", "cię", "ciebie", "tobie", "tobą", "twój", "twoj*", "twoja", "twoje",
+        "wy", "wam", "was", "wami", "wasz*"
+      ],
+      "you_suffixes": ["sz"],
+      "you_exceptions": [
+        "nasz", "wasz", "kosz", "grosz", "kapelusz", "wiersz", "marsz", "mysz", "tusz",
+        "plusz", "pasz", "afisz", "kalosz", "listonosz", "fartusz", "niż", "też"
+      ],
+      "me": [
+        "ja", "mi", "mnie", "mną", "mój", "moj*", "moja", "moje", "my", "nam", "nas", "nami",
+        "nasz*"
+      ],
+      "me_suffixes": ["łem", "łam", "liśmy", "łyśmy"],
+      "me_exceptions": []
+    },
+    "dealbreakers": [
+      {"type": "stop", "regex": "(?i)^\\s*(?:stop\\b|nie\\s+scrolluj|nie\\s+przewijaj|zatrzymaj\\s+się)"},
+      {"type": "preamble", "regex": "(?i)\\bw\\s+(?:tym|dzisiejszym)\\s+(?:filmie|filmiku|wideo|reelsie|odcinku)\\b|\\bdzisiaj\\s+(?:wam\\s+|ci\\s+)?(?:pokażę|opowiem)\\b"},
+      {"type": "greeting", "regex": "(?i)^\\s*(?:cześć|hej|siema|witam|witajcie|dzień\\s+dobry|elo)\\b"}
+    ]
+  },
+
+  "beats": {
+    "stopwords": [
+      "i", "w", "we", "z", "ze", "na", "do", "nie", "się", "to", "jest", "że", "jak", "co",
+      "czy", "ale", "a", "o", "od", "po", "za", "dla", "ten", "ta", "te", "tego", "tak",
+      "już", "tylko", "ja", "ty", "my", "wy", "on", "ona", "oni", "mi", "mnie", "ci", "go",
+      "jej", "ich", "był", "była", "było", "być", "mam", "masz", "ma", "będzie", "też"
+    ]
+  },
+
+  "caption": {
+    "asks": [
+      {"name": "comment a keyword", "regex": "(?i)\\b(?:napisz|napiszcie|wpisz|wpiszcie|zostaw|zostawcie)\\b[^.!?\\n]{0,30}\\bkomentarz\\w*"},
+      {"name": "DM me", "regex": "(?i)(?:\\b(?:napisz|pisz|napiszcie)\\s+(?:do\\s+mnie|do\\s+nas|na\\s+priv|w\\s+wiadomości)|\\bna\\s+priv\\b|\\bdm\\b)"},
+      {"name": "save this", "regex": "(?i)\\bzapisz(?:cie)?\\b"},
+      {"name": "share this", "regex": "(?i)\\b(?:udostępnij|udostępnijcie|wyślij|wyślijcie|podeślij)\\b"},
+      {"name": "follow", "regex": "(?i)\\bobserwuj(?:cie)?\\b"},
+      {"name": "link in bio", "regex": "(?i)\\blink\\s+w\\s+(?:bio|profilu)\\b"},
+      {"name": "swipe or tap", "regex": "(?i)\\b(?:przesuń|przesuńcie|przewiń|przewińcie)\\b"},
+      {"name": "answer a question", "regex": "(?i)\\b(?:a\\s+wy|a\\s+ty|który\\s+wybierasz|co\\s+wybierasz|dajcie\\s+znać|daj\\s+znać)\\b"}
+    ],
+    "filler_tags": [
+      "#dlaciebie", "#polubienia", "#obserwuj", "#lubię", "#fyp", "#explore", "#viral"
+    ]
+  },
+
+  "voice": {
+    "pronoun_target": 4.0
+  },
+
+  "lexicon": {
+    "words": [
+      {"find": "niezastąpion*", "replace": null, "family": "adjectives"},
+      {"find": "rewolucyjn*", "replace": null, "family": "adjectives"},
+      {"find": "innowacyjn*", "replace": null, "family": "adjectives"},
+      {"find": "niesamowit*", "replace": null, "family": "adjectives"},
+      {"find": "magiczn*", "replace": null, "family": "adjectives"},
+      {"find": "wyjątkow*", "replace": null, "family": "adjectives"},
+      {"find": "bez wysiłku", "replace": "łatwo", "family": "adverbs"},
+      {"find": "z łatwością", "replace": "łatwo", "family": "adverbs"},
+      {"find": "w mgnieniu oka", "replace": "szybko", "family": "adverbs"},
+      {"find": "odgrywa kluczową rolę", "replace": null, "family": "verbs"},
+      {"find": "na wyższy poziom", "replace": null, "family": "verbs"}
+    ],
+    "phrases": [
+      {"find": "w dzisiejszym dynamicznym świecie", "replace": "", "family": "openers"},
+      {"find": "w dzisiejszym szybko zmieniającym się świecie", "replace": "", "family": "openers"},
+      {"find": "w dzisiejszych czasach", "replace": "", "family": "openers"},
+      {"find": "w erze cyfrowej", "replace": "", "family": "openers"},
+      {"find": "nie jest tajemnicą, że", "replace": "", "family": "openers"},
+      {"find": "warto zauważyć, że", "replace": "", "family": "openers"},
+      {"find": "warto podkreślić, że", "replace": "", "family": "openers"},
+      {"find": "zanurzmy się w", "replace": null, "family": "openers"},
+      {"find": "przyjrzyjmy się bliżej", "replace": null, "family": "openers"},
+      {"find": "podsumowując", "replace": "", "family": "closers"},
+      {"find": "na zakończenie", "replace": "", "family": "closers"},
+      {"find": "nie zapomnij polubić", "replace": "", "family": "instagram"},
+      {"find": "nie zapomnijcie polubić", "replace": "", "family": "instagram"},
+      {"find": "zostaw lajka", "replace": "", "family": "instagram"},
+      {"find": "zostaw serduszko", "replace": "", "family": "instagram"},
+      {"find": "obserwuj po więcej", "replace": "", "family": "instagram"},
+      {"find": "obserwuj, aby nie przegapić", "replace": null, "family": "instagram"},
+      {"find": "zapisz, żeby nie zgubić", "replace": "zapisz", "family": "instagram"},
+      {"find": "zapisz, aby nie zgubić", "replace": "zapisz", "family": "instagram"}
+    ],
+    "structures": [
+      {"id": "not-just", "regex": "(?i)\\bto\\s+nie\\s+(?:tylko|jest\\s+tylko)\\b[^.!?\\n]{2,60}[,—–-]\\s*(?:to|lecz|ale)\\b", "name": "«To nie tylko X, to Y» (\"It's not just X, it's Y\")", "fix": "Say the one thing you actually mean. Delete the setup half."},
+      {"id": "not-only", "regex": "(?i)\\bnie\\s+tylko\\b[^.!?\\n]{2,80}\\b(?:ale|lecz)\\s+(?:też|także|również)\\b", "name": "«Nie tylko X, ale też Y» (\"Not only X but also Y\")", "fix": "Split into two sentences, or drop the weaker half."},
+      {"id": "isnt-about", "regex": "(?i)\\bnie\\s+chodzi\\s+o\\b[^.!?\\n]{2,60}[.!,]\\s*chodzi\\s+o\\b", "name": "«Nie chodzi o X. Chodzi o Y.»", "fix": "Lead with Y. The reversal is the tell."},
+      {"id": "the-result", "regex": "(?im)^\\s*(?:efekt|wynik|haczyk|sekret)\\?\\s*$", "name": "One-word rhetorical question line", "fix": "Answer it inline instead of staging a reveal."},
+      {"id": "triad", "regex": "(?i)\\b\\w+,\\s\\w+\\s+i\\s+\\w+\\.", "name": "Rule-of-three triad (X, Y i Z.)", "fix": "Two items or four. Three is the model's default rhythm."},
+      {"id": "in-this-video", "regex": "(?i)\\bw\\s+(?:tym|dzisiejszym)\\s+(?:filmie|filmiku|wideo|reelsie|poście)\\b|\\bcześć\\s+wszystkim\\b|\\bdzisiaj\\s+(?:wam\\s+)?(?:pokażę|opowiem)\\b", "name": "Video preamble («w dzisiejszym filmie pokażę»)", "fix": "Delete it and start at the payoff. The first two seconds decide the whole reel."},
+      {"id": "stop-scroll", "regex": "(?im)^\\s*(?:stop\\b|nie\\s+scrolluj|nie\\s+przewijaj|zatrzymaj\\s+się)", "name": "\"Stop scrolling\" opener («nie scrolluj»)", "fix": "The scroll-stop has to be the claim itself. Asking for attention is the tell that you have not earned it."},
+      {"id": "follow-bait", "regex": "(?i)\\b(?:obserwuj\\s+po\\s+więcej|zostaw\\s+(?:lajka|serduszko|łapkę)|oznacz\\s+(?:znajomego|znajomą|osobę|kogoś)|udostępnij\\s+(?:komuś|osobie))\\b", "name": "Reflex follow or tag bait («oznacz znajomą»)", "fix": "Ask for the one action this post actually earns. The generic ask trains the audience to ignore every ask."},
+      {"id": "engagement-bait", "regex": "(?im)(?:zgadzasz\\s+się\\?|zgadzacie\\s+się\\?|a\\s+wy\\s+co\\s+myślicie\\?|kto\\s+też\\?|kto\\s+ma\\s+tak\\s+samo\\?)\\s*$", "name": "Reflex engagement bait («zgadzacie się?»)", "fix": "Ask a question only you could ask, about the specific thing above it."},
+      {"id": "in-summary", "regex": "(?im)^\\s*(?:podsumowując|na\\s+zakończenie|reasumując)\\b", "name": "Essay-closer opener («podsumowując»)", "fix": "A post does not need a conclusion paragraph."},
+      {"id": "as-an-ai", "regex": "(?i)\\bjako\\s+(?:ai|sztuczna\\s+inteligencja|model\\s+językowy)\\b", "name": "Model self-reference", "fix": "Delete the sentence."},
+      {"id": "caps-shout", "regex": "\\b[A-ZĄĆĘŁŃÓŚŹŻ]{3,}\\b(?:\\s+\\b[A-ZĄĆĘŁŃÓŚŹŻ]{3,}\\b){2,}", "name": "Three or more shouted words in a row", "fix": "Caps are a volume knob, not a highlighter. One word, at most."}
+    ]
+  },
+
+  "hook_match": {
+    "1": "\\b(?:kosztował[aoy]?|kosztowało)\\s+(?:mnie|nas)\\b|\\bstraci(?:łem|łam|liśmy)\\b[^.!?]{0,25}\\d|\\d[\\d\\s,.]*\\s*(?:zł|pln|\\$|euro|tys)[^.!?]{0,20}\\b(?:kosztował|straci)",
+    "2": "^\\s*(?:przestań|przestańcie|nigdy\\s+nie|nie\\s+(?:kupuj|używaj|rób|myj|płać)\\w*)\\b",
+    "3": "\\b(?:nikt|nikt\\s+nigdy)\\s+(?:ci\\s+|wam\\s+)?(?:nie\\s+mówi|nie\\s+powie|nie\\s+powiedział|o\\s+tym\\s+nie\\s+mówi)\\b|\\bo\\s+czym\\s+nikt\\s+nie\\s+mówi\\b",
+    "5": "\\bkiedyś\\s+(?:to\\s+)?(?:zajmowało|zajmował[ao]?)\\b|\\b(?:teraz|dziś)\\s+(?:to\\s+)?(?:zajmuje|trwa)\\b|\\bw\\s+\\d+\\s*(?:sekund|minut|min|sek)\\w*",
+    "7": "\\b(?:największy|najczęstszy)\\s+błąd\\b|\\b(?:robisz|myjesz|czyścisz|używasz|robicie|myjecie|czyścicie|używacie)\\b[^.!?]*\\bźle\\b",
+    "9": "^\\s*(?:zapisz(?:cie)?|ukradnij(?:cie)?|bierz(?:cie)?|zapamiętaj(?:cie)?)\\b",
+    "10": "^\\s*(?:jeśli|jeżeli|gdy)\\s+(?:ty|wy|twój|twoja|twoje|wasz|masz|macie|\\w+sz)\\b",
+    "11": "^\\s*\\d+\\s+\\w+|\\b(?:numer|punkt)\\s+\\d+\\b|^\\s*(?:trzy|cztery|pięć|siedem|dziesięć)\\s+\\w+",
+    "15": "\\bpierwsz(?:e|ych)\\s+\\d+\\s+\\w+",
+    "16": "^\\s*[„\"]?(?:jak|co|dlaczego|czemu|kiedy|gdzie|kto|który|która|które|czy)\\b[^?]{3,110}\\?",
+    "17": "\\b(?:vs\\.?|kontra|versus)\\b|\\bróżnic[ae]\\s+między\\b",
+    "18": "^\\s*(?:patrz(?:cie)?|zobacz(?:cie)?|popatrz(?:cie)?|pokażę\\s+(?:ci|wam))\\b",
+    "20": "\\bnie\\s+potrzebujesz\\b|\\bnie\\s+musisz\\b|\\bnie\\s+potrzebujecie\\b|\\bnie\\s+musicie\\b",
+    "23": "^\\s*\\d[\\d\\s,.]*\\s?%|\\b\\d[\\d,.]*\\s?%\\s+(?:polaków|ludzi|osób)\\b",
+    "24": "^\\s*to\\s+(?:jest\\s+)?(?:nowy|nowa|nowe|mój\\s+nowy|moja\\s+nowa)\\b",
+    "26": "^\\s*(?:najszybsz|najprostsz|najlepsz|najłatwiejsz|najtańsz|jedyn)\\w*\\s+\\w+|\\b(?:najszybszy|najlepszy|jedyny|najprostszy)\\s+sposób\\b"
+  }
+}

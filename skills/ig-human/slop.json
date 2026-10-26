@@ -971,7 +971,7 @@
       "id": "hashtag-wall",
       "regex": "(?:#\\w+[ \\t]*){5,}",
       "name": "Hashtag wall (5+)",
-      "fix": "Three hashtags. LinkedIn stopped rewarding the wall."
+      "fix": "Three to five topic tags, below the fold. Instagram counts five at most since December 2025."
     },
     {
       "id": "as-an-ai",

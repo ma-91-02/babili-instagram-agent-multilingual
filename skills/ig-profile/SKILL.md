@@ -10,6 +10,8 @@ description: >-
 
 # ig-profile
 
+**Language.** Write in the audience's language and dialect from `language:` in voice.md, or the language the user writes in. Arabic, Russian, Turkish, Polish, Czech and English are supported: follow the `ig-lang` skill (`../ig-lang/SKILL.md`) for dialect, register and local norms, and write it native rather than translating the English examples below.
+
 Almost everybody optimises the wrong thing here. The profile is not a
 storefront people browse. It is a **decision screen**, arrived at from one
 reel, and it gets about three seconds to answer one question: is there more of

@@ -9,6 +9,8 @@ description: >-
 
 # ig-reply
 
+**Language.** Write in the audience's language and dialect from `language:` in voice.md, or the language the user writes in. Arabic, Russian, Turkish, Polish, Czech and English are supported: follow the `ig-lang` skill (`../ig-lang/SKILL.md`) for dialect, register and local norms, and write it native rather than translating the English examples below.
+
 The comment thread under your own post is where reach is decided. Every reply
 is another interaction on the post, replies arriving in the first hour do most
 of the work, and on Instagram a reply can also be a Reel, which is the single

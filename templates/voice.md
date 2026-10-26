@@ -22,6 +22,24 @@ the words out loud. A line you would never say is not a draft, it is a retake.
   not "creatives")
 - **What I sell:**
 
+## Language
+
+Every skill writes in this language. See the `ig-lang` skill for what each
+setting changes.
+
+- **language:** (one of `en`, `ar`, `ru`, `tr`, `pl`, `cs`, with a market if it
+  matters: `ar-IQ`, `ar-SA`, `ar-EG`, `ru-RU`, `tr-TR`, `pl-PL`, `cs-CZ`)
+- **Dialect or register for spoken Reels:** (e.g. Iraqi dialect / Modern
+  Standard Arabic / neutral Russian)
+- **Dialect or register for captions and carousels:** (can differ from the
+  spoken one, never mixed inside one post)
+- **How I address the viewer:** (انت / انتي / انتو · ты / вы · sen / siz ·
+  ty / Pan, Pani · ty / vy)
+- **Digits:** (0-9 or ٠-٩)
+- **Currency as I write it:** (e.g. 25,000 دينار · 990 ₽ · 349 TL · 49 zł · 199 Kč)
+- **Second language mixed in, if any:** (e.g. English product names kept in
+  Latin letters inside Arabic captions)
+
 ## What I sound like
 
 - **Three of my own reels or captions that sound most like me:** (paste them)
@@ -33,7 +51,9 @@ the words out loud. A line you would never say is not a draft, it is a retake.
 - **Face on camera:** (always / sometimes / faceless)
 - **Voiceover or to-camera:**
 - **Pace:** (words per minute, if you have timed yourself reading a script.
-  `beats.py --wpm` uses this. Most people are between 150 and 200.)
+  `beats.py --wpm` uses this. In English most people are between 150 and
+  200; in Arabic, Russian, Polish and Czech expect fewer words per minute,
+  and in Turkish fewer still, because each word carries more.)
 
 ## My positions
 

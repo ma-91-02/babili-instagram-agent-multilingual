@@ -19,9 +19,16 @@ with a header line naming the columns:
 If you only have `followers`, leave median out and the script says so.
 `hook` is the first line of the reel, spoken or on screen, in their words.
 
+Languages: every hook is detected on its own (or pass --lang), so one batch
+can mix Arabic, Russian, Turkish, Polish, Czech and English reels. Formulas
+are named with each language's own patterns from ../ig-lang/lang/<code>.json,
+which cover the 16 most common formulas; a hook those do not cover comes back
+unclassified rather than guessed.
+
 Usage
   python3 swipe.py captured.tsv
   python3 swipe.py captured.tsv --out ~/.claude/instagram/swipe.md
+  python3 swipe.py captured.tsv --lang ar
   python3 swipe.py captured.tsv --json
 """
 
@@ -33,25 +40,51 @@ import statistics
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-HOOKS = os.path.join(HERE, "..", "ig-reel", "hooks.json")
 WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
 
+
+def _sibling(skill):
+    """skills/<skill>, or wherever a plugin host mounted it ('plugin:ig-reel')."""
+    parent = os.path.dirname(HERE)
+    dirs = [os.path.join(parent, skill)]
+    try:
+        dirs += [os.path.join(parent, d) for d in sorted(os.listdir(parent))
+                 if d.endswith(skill) and d != skill]
+    except OSError:
+        pass
+    for d in dirs:
+        if os.path.isdir(d):
+            return d
+    return os.path.join(parent, skill)
+
+
+REEL_DIR = _sibling("ig-reel")
+HOOKS = os.path.join(REEL_DIR, "hooks.json")
+
 try:                                              # optional: score the hooks too
-    sys.path.insert(0, os.path.join(HERE, "..", "ig-reel"))
-    from hookscore import run as score_hook       # noqa: E402
+    sys.path.insert(0, REEL_DIR)
+    from hookscore import score as score_hook     # noqa: E402
+    from hookscore import i18n                    # noqa: E402
 except Exception:                                 # ig-viral copied on its own
-    score_hook = None
+    score_hook, i18n = None, None
 
 
-def load_formulas(path):
+def load_formulas(path, pack=None):
+    """The 26 formulas, in classify order. For a non-English pack, each
+    formula uses that language's pattern; formulas without one are skipped."""
     try:
         d = json.load(open(path, encoding="utf-8"))
     except Exception:
         return None
     by_id = {h["id"]: h for h in d["hooks"]}
     order = d.get("classify_order") or sorted(by_id)
+    if pack is None:
+        return [(by_id[i]["id"], by_id[i]["name"],
+                 re.compile(by_id[i]["match"], re.IGNORECASE)) for i in order if i in by_id]
+    local = pack.get("hook_match", {})
     return [(by_id[i]["id"], by_id[i]["name"],
-             re.compile(by_id[i]["match"], re.IGNORECASE)) for i in order if i in by_id]
+             re.compile(local[str(i)], re.IGNORECASE)) for i in order
+            if i in by_id and str(i) in local]
 
 
 def classify(hook, formulas):
@@ -91,16 +124,25 @@ def read_rows(path):
     return rows
 
 
-def analyse(rows, formulas):
+def analyse(rows, formulas, hooks_path=None, lang="auto"):
+    """`formulas` is the English list. Hooks in another language are
+    classified with that language's patterns, loaded once per language."""
     used_median = any(r.get("median") for r in rows)
+    per_lang = {"en": formulas}
     for r in rows:
         base = r.get("median") or r.get("followers") or 0
         r["baseline"] = base
         r["outlier"] = round(r["views"] / base, 2) if base else None
-        r["formula_id"], r["formula"] = classify(r["hook"], formulas)
-        r["words"] = len(WORD_RE.findall(r["hook"]))
+        pack = i18n.resolve(lang, r["hook"]) if i18n else None
+        code = pack["code"] if pack else "en"
+        if code not in per_lang:
+            per_lang[code] = load_formulas(hooks_path or HOOKS, pack)
+        r["lang"] = code
+        r["formula_id"], r["formula"] = classify(r["hook"], per_lang[code])
+        r["words"] = (len(WORD_RE.findall(r["hook"])) if code == "en"
+                      else len(i18n.words(r["hook"])))
         if score_hook:
-            _, overall, verdict, _ = score_hook(r["hook"])
+            _, overall, verdict, _, _ = score_hook(r["hook"], lang)
             r["hook_score"], r["hook_verdict"] = round(overall, 1), verdict
         else:
             r["hook_score"], r["hook_verdict"] = None, None
@@ -138,8 +180,9 @@ def render(a, out=sys.stdout):
         mult = f"{r['outlier']:.1f}x" if r["outlier"] else "   ?"
         score = f"{r['hook_score']:.0f}" if r["hook_score"] is not None else " -"
         fid = f"#{r['formula_id']:<2}" if r["formula_id"] else "-  "
+        tag = f" [{r['lang']}]" if r.get("lang", "en") != "en" else ""
         print(f"  {mult:>7}  hook {score:>3}  {fid} {r['formula'][:22]:<22} "
-              f"{r.get('account', '')[:16]:<16} {r['views']:>9,}", file=out)
+              f"{r.get('account', '')[:16]:<16} {r['views']:>9,}{tag}", file=out)
         print(f"           \"{r['hook'][:96]}\"", file=out)
     print("-" * max(len(head), 78), file=out)
     print("WHAT IS WORKING IN THIS BATCH", file=out)
@@ -176,6 +219,8 @@ def main():
     ap.add_argument("input", nargs="?", default="-", help="TSV file, or - for stdin")
     ap.add_argument("--hooks", default=HOOKS, help="path to ig-reel/hooks.json")
     ap.add_argument("--out", help="also write the swipe file as markdown here")
+    ap.add_argument("--lang", default="auto",
+                    help="en, ar, ru, tr, pl, cs, or auto to detect each hook (default)")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
 
@@ -185,7 +230,7 @@ def main():
               file=sys.stderr)
         sys.exit(2)
     formulas = load_formulas(args.hooks)
-    a = analyse(rows, formulas)
+    a = analyse(rows, formulas, hooks_path=args.hooks, lang=args.lang)
     if not formulas:
         print("note: hooks.json not found, formulas not named. Pass --hooks.", file=sys.stderr)
     if score_hook is None:

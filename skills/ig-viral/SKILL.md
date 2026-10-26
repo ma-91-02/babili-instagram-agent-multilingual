@@ -12,6 +12,8 @@ description: >-
 
 # ig-viral
 
+**Language.** Write in the audience's language and dialect from `language:` in voice.md, or the language the user writes in. Arabic, Russian, Turkish, Polish, Czech and English are supported: follow the `ig-lang` skill (`../ig-lang/SKILL.md`) for dialect, register and local norms, and write it native rather than translating the English examples below. The tools in this folder detect the language themselves; pass `--lang ar|ru|tr|pl|cs|en` when the text is short or mixed, and relay their English-labelled reports in the user's language.
+
 The research skill. Everything else in this pack writes; this one goes and
 looks. Run it monthly, not daily. Formulas last a season.
 
@@ -95,6 +97,7 @@ python3 -m yt_dlp --flat-playlist --playlist-end 40 -J \
   "https://www.youtube.com/@HANDLE/shorts" > channel.json
 
 # the spoken first line of one short, from its auto-captions
+# (swap "en.*" for the niche's language: "ar.*", "ru.*", "tr.*", "pl.*", "cs.*")
 python3 -m yt_dlp --skip-download --write-auto-subs --sub-langs "en.*" \
   --sub-format json3 -o hook "https://www.youtube.com/watch?v=VIDEO_ID"
 ```
