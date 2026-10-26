@@ -226,5 +226,13 @@ d = js("ig-human/detect.py", fam * 30)
 check("emoji joiners not counted as fingerprint (en)",
       d["checks"]["FINGERPRINT"]["detail"].startswith("0 invisible"), d["checks"]["FINGERPRINT"])
 
+# Turkish softens t to d before a vowel: kaydet -> kaydedin, takip et -> takip edin.
+c = js("ig-caption/caption.py", "Bu videoyu kaydedin. Yeni videolar için bizi takip etmeyi unutmayın!\n", "--lang", "tr")
+check("tr asks: kaydedin and takip etmeyi unutmayın", c["asks"] == ["save this", "follow"], c["asks"])
+c = js("ig-caption/caption.py", "Trendyol ve Hepsiburada'da Universal Cleaner'ı arayın.\n", "--lang", "tr")
+check("tr asks: marketplace search", c["asks"] == ["buy on a marketplace"], c["asks"])
+h = js("ig-human/humanize.py", "Ürünlerimizi Trendyol’da bulabilirsiniz.\n", "--lang", "tr")
+check("tr typographic apostrophe kept", "’" in h["text"], h["text"])
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

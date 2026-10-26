@@ -8,7 +8,7 @@
   "wpm": 120,
   "hook_words": [4, 9],
   "hook_chars": 70,
-  "typography_native": [],
+  "typography_native": ["’"],
 
   "numbers": {
     "spoken": [
@@ -77,9 +77,11 @@
     "asks": [
       {"name": "comment a keyword", "regex": "(?i)\\b(?:yorumlara|yoruma)\\b[^.!?\\n]{0,30}\\b(?:yaz|yazın|bırak|bırakın)\\b|\\b(?:yaz|yazın)\\b[^.!?\\n]{0,30}\\byorumlara\\b"},
       {"name": "DM me", "regex": "(?i)\\b(?:dm|direkt(?:ten)?|özel(?:den)?\\s+mesaj|mesaj\\s+at(?:ın)?)\\b"},
-      {"name": "save this", "regex": "(?i)\\bkaydet(?:in)?\\b"},
+      {"name": "save this", "regex": "(?i)\\bkayde[dt](?:in|iniz|ebilirsiniz)?\\b"},
       {"name": "share this", "regex": "(?i)\\b(?:paylaş(?:ın)?|gönder(?:in)?)\\b"},
-      {"name": "follow", "regex": "(?i)\\btakip\\s+et(?:in)?\\b"},
+      {"name": "follow", "regex": "(?i)\\btakip\\s+(?:et|edin|ediniz|etmeyi\\s+unutma\\w*)\\b|\\btakipte\\s+kal\\w*"},
+      {"name": "visit the profile", "regex": "(?i)\\bprofil(?:imize|ime)\\s+(?:göz\\s+at|bak)\\w*"},
+      {"name": "buy on a marketplace", "regex": "(?i)\\b(?:trendyol|hepsiburada|n11|amazon)\\b[^.!?\\n]{0,60}\\b(?:ara(?:yın)?|bul(?:un|abilirsiniz)|sipariş\\s+ver\\w*|satın\\s+al\\w*)"},
       {"name": "link in bio", "regex": "(?i)\\b(?:link|bağlantı)\\s+(?:bio(?:'?da|da)?|profilde)\\b"},
       {"name": "swipe or tap", "regex": "(?i)\\b(?:kaydır(?:ın)?|sola\\s+kaydır)\\b"},
       {"name": "answer a question", "regex": "(?i)\\b(?:siz\\s+ne\\s+düşünüyorsunuz|hangisi|sizce|bana\\s+yazın)\\b"}
