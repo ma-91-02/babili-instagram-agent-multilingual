@@ -372,7 +372,7 @@ caption and swipe-file examples still read the same.
   phrase lexicon, structural tells, and patterns for 16 of the 26 hook
   formulas.
 - `--lang` on all five tools, with auto-detection by default.
-- `tests/run_tests.py` - 107 checks across six languages.
+- `tests/run_tests.py` - 109 checks across six languages.
 - A `Language` section in `templates/voice.md` and a language rule at the top
   of every skill.
 
@@ -417,7 +417,7 @@ skills/ig-lang/SKILL.md            the language rules every other skill follows
 skills/ig-lang/i18n.py             the shared language layer for the five tools
 skills/ig-lang/lang/<code>.json    one word-list pack per language: en ar ru tr pl cs
 templates/voice.md                 your voice profile. Fill this in first.
-tests/run_tests.py                 107 checks across six languages
+tests/run_tests.py                 109 checks across six languages
 ```
 
 ## Credit

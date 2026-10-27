@@ -234,5 +234,11 @@ check("tr asks: marketplace search", c["asks"] == ["buy on a marketplace"], c["a
 h = js("ig-human/humanize.py", "Ürünlerimizi Trendyol’da bulabilirsiniz.\n", "--lang", "tr")
 check("tr typographic apostrophe kept", "’" in h["text"], h["text"])
 
+# Russian possessives are full words, not a stem: "твоей" is "you", "мойка" (car wash) is not "me".
+r = js("ig-reel/hookscore.py", "Чем отмыть акрил в твоей ванне\n", "--lang", "ru")
+check("ru address: твоей counts as you", r["checks"]["ADDRESS"]["detail"] == "speaks to the viewer", r["checks"]["ADDRESS"])
+r = js("ig-reel/hookscore.py", "Мойка авто за 10 минут\n", "--lang", "ru")
+check("ru address: мойка is not first person", r["checks"]["ADDRESS"]["score"] != 70.0, r["checks"]["ADDRESS"])
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)
